@@ -2,10 +2,19 @@
 
 #include "../utils/shaderloader.h"
 #include <glm/gtc/type_ptr.hpp>
+#include <random>
 #include <vector>
 
+int random32Bit()
+{
+    std::random_device rd;
+    std::mt19937 rng(rd());
+    std::uniform_int_distribution<uint32_t> dist(0, UINT32_MAX);
+    return dist(rng);
+}
+
 static inline float getRandom() {
-    return (arc4random() % 10000) / 10000.0f;
+    return (random32Bit() % 10000) / 10000.0f;
 }
 
 ParticleSystem::ParticleSystem(){}
@@ -84,7 +93,7 @@ void ParticleSystem::updateParticles(float dt) {
             m_inactiveParticles.pop();
             respawnParticle(m_particles[index]);
         } else {
-            respawnParticle(m_particles[arc4random() % m_maxParticles]);
+            respawnParticle(m_particles[random32Bit() % m_maxParticles]);
         }
         m_newParticles -= 1.0f;
     }
