@@ -330,13 +330,9 @@ void Realtime::timerEvent(QTimerEvent *event) {
     particles.updateParticles(deltaTime);
 
     // Physics updates: before we draw! Additionally, update the ctm before drawing.
-    for (auto &shape : metadata.shapes) {
-        RigidBody &body = shape.body;
-        // step through physics, which will update our position and rotation matrix. remake ctm and inverse ctm!
-        body.physicsStep(deltaTime);
-        shape.ctm = glm::translate(glm::mat4(1.0f), body.position) * glm::mat4(body.rot_matrix)
-                    * shape.scale;
-        shape.inverse_ctm = glm::inverse(shape.ctm);
+    if (metadata.shapes.size() > 0) {
+        stepPhysics(deltaTime);
+        resolveCollisions();
     }
     update(); // asks for a PaintGL() call to occur
 }

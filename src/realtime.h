@@ -93,4 +93,12 @@ private:
     uint m_shader;
 
     ParticleSystem particles;
+
+    // Physics
+    void stepPhysics(float deltaTime);
+    void resolveCollisions();
+    void updateBoundingBoxes();
+    void sweepAndPrune();
+    void resolveOneCollision(RigidBody *A, RigidBody *B);
+    glm::vec3 calculateMTV(RigidBody *A, RigidBody *B);
 };
