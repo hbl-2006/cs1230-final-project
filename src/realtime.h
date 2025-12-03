@@ -18,6 +18,8 @@
 #include <QOpenGLWidget>
 #include <QTime>
 #include <QTimer>
+#include "camera/cameraPath.h"
+#include "particles/particleSystem.h"
 
 class Realtime : public QOpenGLWidget
 {
@@ -35,6 +37,7 @@ protected:
     void initializeGL() override;                       // Called once at the start of the program
     void paintGL() override;                            // Called whenever the OpenGL context changes or by an update() request
     void resizeGL(int width, int height) override;      // Called when window size changes
+    void updateLighting();
 
 private:
     bool initialized = false;
@@ -42,6 +45,8 @@ private:
     // Scenefile Stuff
     RenderData metadata;
     Camera camera;
+    CameraPath cameraPath;
+    bool prevP;
 
     // enum for each shape to make accessing stuff easier.
     enum ShapeNames { SPHERE, CONE, CUBE, CYLINDER };
@@ -86,4 +91,6 @@ private:
 
     // shader
     uint m_shader;
+
+    ParticleSystem particles;
 };

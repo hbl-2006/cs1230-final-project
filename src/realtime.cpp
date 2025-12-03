@@ -8,6 +8,11 @@
 #include "utils/sceneparser.h"
 #include "utils/shaderloader.h"
 #include <glm/gtx/string_cast.hpp>
+#include "camera/cameraPath.h"
+#include "camera/cameraPathTest.h"
+#include <glm/gtx/quaternion.hpp>
+#include <glm/gtx/euler_angles.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 // ================== Rendering the Scene!
 
@@ -29,6 +34,8 @@ Realtime::Realtime(QWidget *parent)
     m_keyMap[Qt::Key_D]       = false;
     m_keyMap[Qt::Key_Control] = false;
     m_keyMap[Qt::Key_Space]   = false;
+    m_keyMap[Qt::Key_P]       = false;
+    prevP                     = false;
 
     // If you must use this function, do not edit anything above this
 }
@@ -42,6 +49,8 @@ void Realtime::finish() {
     glDeleteBuffers(4, vaos);
     glDeleteProgram(m_shader);
     this->doneCurrent();
+
+    particles.finish();
 }
 
 void Realtime::initializeGL() {
@@ -79,39 +88,18 @@ void Realtime::initializeGL() {
     initializeData(cone, CONE);
     initializeData(cube, CUBE);
     initializeData(cylinder, CYLINDER);
+    
+    cameraPath = CameraPath();
+    useCameraPath(cameraPath, CameraPathTestType::PATH_CIRCULAR); // pick path here for camera path
+    cameraPath.buildPath();
+
+    srand(time(NULL));
+    particles.initialize();
 
     initialized = true;
 }
 
-void Realtime::paintGL() {
-    // Students: anything requiring OpenGL calls every frame should be done here
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glUseProgram(m_shader);
-    // draw each shape in our render data
-    for (auto &shape : metadata.shapes) {
-        drawShape(shape);
-    }
-    glUseProgram(0);
-}
-
-void Realtime::resizeGL(int w, int h) {
-    // Tells OpenGL how big the screen is
-    glViewport(0, 0, size().width() * m_devicePixelRatio, size().height() * m_devicePixelRatio);
-
-    // Students: anything requiring OpenGL calls when the program starts should be done here
-}
-
-void Realtime::sceneChanged() {
-    // update our metadata with the new scenefile
-    bool success = SceneParser::parse(settings.sceneFilePath, metadata);
-    camera = Camera(metadata.cameraData,
-                    size().width(),
-                    size().height(),
-                    settings.nearPlane,
-                    settings.farPlane);
-
-    // Populate our shader uniforms
-    glUseProgram(m_shader);
+void Realtime::updateLighting(){
     glUniform1f(glGetUniformLocation(m_shader, "ambient"), metadata.globalData.ka);
     glUniform1f(glGetUniformLocation(m_shader, "diffuse"), metadata.globalData.kd);
     glUniform1f(glGetUniformLocation(m_shader, "specular"), metadata.globalData.ks);
@@ -165,6 +153,49 @@ void Realtime::sceneChanged() {
             = glGetUniformLocation(m_shader, ("lights[" + std::to_string(i) + "].penumbra").c_str());
         glUniform1f(penumbraLoc, light.penumbra);
     }
+}
+
+void Realtime::paintGL() {
+    // Students: anything requiring OpenGL calls every frame should be done here
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glDisable(GL_BLEND);
+    glDepthMask(GL_TRUE);
+    glUseProgram(m_shader);
+    // draw each shape in our render data
+    updateLighting();
+    for (auto &shape : metadata.shapes) {
+        drawShape(shape);
+    }
+    glUseProgram(0);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    glDepthMask(GL_FALSE);
+    particles.render(camera.getViewMatrix(), camera.getProjectionMatrix());
+    glDisable(GL_BLEND);
+    glDepthMask(GL_TRUE);
+}
+
+void Realtime::resizeGL(int w, int h) {
+    // Tells OpenGL how big the screen is
+    glViewport(0, 0, size().width() * m_devicePixelRatio, size().height() * m_devicePixelRatio);
+
+    // Students: anything requiring OpenGL calls when the program starts should be done here
+}
+
+void Realtime::sceneChanged() {
+    // update our metadata with the new scenefile
+    bool success = SceneParser::parse(settings.sceneFilePath, metadata);
+    camera = Camera(metadata.cameraData,
+                    size().width(),
+                    size().height(),
+                    settings.nearPlane,
+                    settings.farPlane);
+    camera.setPathTime(0.0f);
+
+    // Populate our shader uniforms
+    glUseProgram(m_shader);
+    updateLighting();
     glUseProgram(0);
 
     if (!success) {
@@ -245,29 +276,58 @@ void Realtime::timerEvent(QTimerEvent *event) {
     m_elapsedTimer.restart();
 
     // Use deltaTime and m_keyMap here to move around
-    auto worldSpaceVec = glm::vec3(0);
-    if (m_keyMap[Qt::Key_Space]) {
-        worldSpaceVec += glm::vec3(0, 1, 0);
+    if (m_keyMap[Qt::Key_P] && !prevP) {
+        camera.toggleCameraPath();
+        if (camera.useCameraPathEnabled()) {
+            camera.setPathTime(0.0f);
+
+            glm::vec3 newPos = cameraPath.evaluatePoint(0.0f);
+            glm::quat rotation = cameraPath.getOrientation(0.0f);
+            glm::vec4 newLook = glm::normalize(rotation * glm::vec4(0, 0, -1, 0));
+            glm::vec4 newUp = glm::normalize(rotation * glm::vec4(0, 1, 0, 0));
+
+            camera.setPosition(glm::vec4(newPos, 1.0f));
+            camera.setLookandUp(newLook, newUp);
+        }
     }
-    if (m_keyMap[Qt::Key_Control]) {
-        worldSpaceVec += glm::vec3(0, -1, 0);
+    prevP = m_keyMap[Qt::Key_P];
+
+    if (!camera.useCameraPathEnabled()) {
+        auto worldSpaceVec = glm::vec3(0);
+        if (m_keyMap[Qt::Key_Space]) {
+            worldSpaceVec += glm::vec3(0, 1, 0);
+        }
+        if (m_keyMap[Qt::Key_Control]) {
+            worldSpaceVec += glm::vec3(0, -1, 0);
+        }
+        if (m_keyMap[Qt::Key_W]) {
+            worldSpaceVec += glm::normalize(camera.getLook());
+        }
+        if (m_keyMap[Qt::Key_S]) {
+            worldSpaceVec += -glm::normalize(camera.getLook());
+        }
+        if (m_keyMap[Qt::Key_A]) {
+            worldSpaceVec += -glm::normalize(glm::cross(camera.getLook(), camera.getUp()));
+        }
+        if (m_keyMap[Qt::Key_D]) {
+            worldSpaceVec += glm::normalize(glm::cross(camera.getLook(), camera.getUp()));
+        }
+        if (worldSpaceVec != glm::vec3(0)) {
+            worldSpaceVec = glm::normalize(worldSpaceVec);
+        }
+        camera.translate(worldSpaceVec, deltaTime * 5);
+    } else {
+        camera.updatePathTime(deltaTime);
+        glm::vec3 newPos = cameraPath.evaluatePoint(camera.getPathTime());
+        glm::quat rotation = cameraPath.getOrientation(camera.getPathTime());
+        glm::vec4 newLook = glm::normalize(rotation * glm::vec4(0, 0, -1, 0));
+        glm::vec4 newUp = glm::normalize(rotation * glm::vec4(0, 1, 0, 0));
+
+        camera.setPosition(glm::vec4(newPos, 1.0f));
+        camera.setLookandUp(newLook, newUp);
     }
-    if (m_keyMap[Qt::Key_W]) {
-        worldSpaceVec += glm::normalize(camera.getLook());
-    }
-    if (m_keyMap[Qt::Key_S]) {
-        worldSpaceVec += -glm::normalize(camera.getLook());
-    }
-    if (m_keyMap[Qt::Key_A]) {
-        worldSpaceVec += -glm::normalize(glm::cross(camera.getLook(), camera.getUp()));
-    }
-    if (m_keyMap[Qt::Key_D]) {
-        worldSpaceVec += glm::normalize(glm::cross(camera.getLook(), camera.getUp()));
-    }
-    if (worldSpaceVec != glm::vec3(0)) {
-        worldSpaceVec = glm::normalize(worldSpaceVec);
-    }
-    camera.translate(worldSpaceVec, deltaTime * 5);
+
+    particles.updateParticles(deltaTime);
 
     // Physics updates: before we draw! Additionally, update the ctm before drawing.
     for (auto &shape : metadata.shapes) {

@@ -51,6 +51,15 @@ public:
 
     void translate(glm::vec3 along, float amt);
     void rotate(glm::vec3 axis, float rads);
+    
+    void setPosition(const glm::vec4& position);
+    void setLookandUp(const glm::vec4& look, const glm::vec4& up);
+
+    void toggleCameraPath();
+    bool useCameraPathEnabled() const;
+    void updatePathTime(float deltaTime);
+    void setPathTime(float t);
+    float getPathTime() const;
 
 private:
     glm::mat4 viewMatrix;
@@ -66,4 +75,8 @@ private:
     glm::vec3 up;
     glm::vec3 pos;
     void remakeViewMatrix();
+
+    bool useCameraPath;
+    float path_t;
+    float path_speed;
 };

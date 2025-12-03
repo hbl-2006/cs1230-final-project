@@ -50,6 +50,12 @@ add_executable(${PROJECT_NAME}
     src/shapes/Shape.h
     src/camera/camera.cpp src/camera/camera.h src/shapes/Cone.cpp src/shapes/Cone.h src/shapes/Cube.cpp src/shapes/Cube.h src/shapes/Cylinder.cpp src/shapes/Cylinder.h src/shapes/Shape.h src/shapes/Sphere.cpp src/shapes/Sphere.h src/shapes/Tet.cpp src/shapes/Tet.h src/shapes/Triangle.cpp src/shapes/Triangle.h src/utils/aspectratiowidget/aspectratiowidget.hpp src/utils/scenedata.h src/utils/scenefilereader.cpp src/utils/scenefilereader.h src/utils/sceneparser.cpp src/utils/sceneparser.h src/utils/shaderloader.h src/utils/util_funcs.cpp src/utils/util_funcs.h src/debug.h src/main.cpp src/mainwindow.cpp src/mainwindow.h src/realtime.cpp src/realtime.h src/settings.cpp src/settings.h src/shape_stuff.cpp
     src/physics/rigid_body.h
+    src/camera/cameraPath.cpp
+    src/camera/cameraPath.h
+    src/camera/cameraPathTest.cpp
+    src/camera/cameraPathTest.h
+    src/particles/particleSystem.cpp
+    src/particles/particleSystem.h
 )
 
 # GLM: this creates its library and allows you to `#include "glm/..."`
@@ -78,6 +84,8 @@ qt6_add_resources(${PROJECT_NAME} "Resources"
     FILES
         resources/shaders/default.frag
         resources/shaders/default.vert
+        resources/shaders/particles.frag
+        resources/shaders/particles.vert
 )
 
 # GLEW: this provides support for Windows (including 64-bit)

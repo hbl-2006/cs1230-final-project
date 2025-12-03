@@ -23,6 +23,10 @@ Camera::Camera(const SceneCameraData& data, int canvasWidth, int canvasHeight, f
     aspectRatio = canvasWidth / (float) canvasHeight;
     widthAngle = 2 * glm::atan(aspectRatio * glm::tan(heightAngle / 2.0));
     makeProjectionMatrix(near, far);
+
+    this->useCameraPath = false;
+    this->path_t = 0.0f;
+    this->path_speed = 0.25f;
 }
 
 glm::mat4 Camera::getViewMatrix() const {
@@ -159,4 +163,38 @@ void Camera::remakeViewMatrix()
     T[3] = glm::vec4(-pos.x, -pos.y, -pos.z, 1);
     viewMatrix = R * T;
     inverseViewMatrix = glm::inverse(viewMatrix);
+}
+
+void Camera::setPosition(const glm::vec4& position) {
+    this->pos = glm::vec3(position.x, position.y, position.z);
+    remakeViewMatrix();
+}
+
+void Camera::setLookandUp(const glm::vec4& look, const glm::vec4& up) {
+    this->look = glm::vec3(look.x, look.y, look.z);
+    this->up = glm::vec3(up.x, up.y, up.z);
+    remakeViewMatrix();
+}
+
+void Camera::toggleCameraPath() {
+    this->useCameraPath = !this->useCameraPath;
+}
+
+bool Camera::useCameraPathEnabled() const {
+    return this->useCameraPath;
+}
+
+void Camera::updatePathTime(float deltaTime) {
+    this->path_t += deltaTime * this->path_speed;
+    if (this->path_t > 1.0f) {
+        this->path_t -= 1.0f;
+    }
+}
+
+void Camera::setPathTime(float t) {
+    this->path_t = t;
+}
+
+float Camera::getPathTime() const {
+    return this->path_t;
 }
