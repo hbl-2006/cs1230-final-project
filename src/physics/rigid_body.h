@@ -1,6 +1,5 @@
 #ifndef RIGID_BODY_H
 #define RIGID_BODY_H
-#include "utils/scenedata.h"
 #include <glm/gtc/quaternion.hpp>
 // Bounding box structure for collisions: all of our default primitives have the same bounding box in object space.
 struct BoundingBox
@@ -49,8 +48,10 @@ struct RigidBody
 
     void addAngularImpulse(glm::vec3 K) { angular_momentum += K; }
 
-    void physicsStep(float dt)
+    bool physicsStep(float dt)
     {
+        if (mass_inv == 0.0f)
+            return false;
         linear_momentum += dt * force;
         angular_momentum += dt * torque;
 
@@ -74,6 +75,7 @@ struct RigidBody
 
         force = glm::vec3(0);
         torque = glm::vec3(0);
+        return true;
     }
 };
 

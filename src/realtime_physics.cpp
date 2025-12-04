@@ -5,10 +5,13 @@ void Realtime::stepPhysics(float deltaTime)
     for (auto &shape : metadata.shapes) {
         RigidBody &body = shape.body;
         // step through physics, which will update our position and rotation matrix. remake ctm and inverse ctm!
-        body.physicsStep(deltaTime);
-        shape.ctm = glm::translate(glm::mat4(1.0f), body.position) * glm::mat4(body.rot_matrix)
-                    * shape.scale;
-        shape.inverse_ctm = glm::inverse(shape.ctm);
+        body.addForce(glm::vec3(0, -1, 0));
+        bool stepped = body.physicsStep(deltaTime);
+        if (stepped) {
+            shape.ctm = glm::translate(glm::mat4(1.0f), body.position) * glm::mat4(body.rot_matrix)
+                        * shape.scale;
+            shape.inverse_ctm = glm::inverse(shape.ctm);
+        }
     }
 }
 
@@ -25,11 +28,11 @@ void Realtime::updateBoundingBoxes()
     for (auto &shape : metadata.shapes) {
         RigidBody &body = shape.body;
         BoundingBox &box = body.box;
-        glm::vec3 init = box.obj_space_corners[0];
+        glm::vec3 init = glm::vec3(shape.ctm * glm::vec4(box.obj_space_corners[0], 1));
         glm::vec3 min = init;
         glm::vec3 max = init;
         for (int i = 1; i < 8; i++) {
-            auto worldVec = glm::vec3(shape.ctm * glm::vec4(box.obj_space_corners[1], 1));
+            auto worldVec = glm::vec3(shape.ctm * glm::vec4(box.obj_space_corners[i], 1));
             // Take the element-wise min and max of our current min and max with this vector, eventually builds
             // world space min+max
             min = glm::min(min, worldVec);
@@ -83,6 +86,10 @@ void Realtime::sweepAndPrune()
 void Realtime::resolveOneCollision(RigidBody *A, RigidBody *B)
 {
     glm::vec3 mtv = calculateMTV(A, B);
+    // skip zero mtv, we don't want NaNs.
+    if (mtv == glm::vec3(0.0f)) {
+        return;
+    }
     // We have cases here: both are static, one is static, or neither is static.
     if (A->mass_inv == 0 && B->mass_inv == 0) {
         // Two static objects colliding doesn't actually do anything, since they can't move.
@@ -117,19 +124,21 @@ glm::vec3 Realtime::calculateMTV(RigidBody *A, RigidBody *B)
     glm::vec3 mtv(0.0f);
 
     // Pick the axis with the least overlap, and that overlap is our MTV.
-    float overlapX = std::min(A->box.max_world.x, B->box.max_world.x)
-                     - std::max(A->box.min_world.x, B->box.min_world.x);
-    float overlapY = std::min(A->box.max_world.y, B->box.max_world.y)
-                     - std::max(A->box.min_world.y, B->box.min_world.y);
-    float overlapZ = std::min(A->box.max_world.z, B->box.max_world.z)
-                     - std::max(A->box.min_world.z, B->box.min_world.z);
-
-    assert(overlapX >= 0.0f);
-    assert(overlapY >= 0.0f);
-    assert(overlapZ >= 0.0f);
+    float overlapX = std::max(0.0f,
+                              std::min(A->box.max_world.x, B->box.max_world.x)
+                                  - std::max(A->box.min_world.x, B->box.min_world.x));
+    float overlapY = std::max(0.0f,
+                              std::min(A->box.max_world.y, B->box.max_world.y)
+                                  - std::max(A->box.min_world.y, B->box.min_world.y));
+    float overlapZ = std::max(0.0f,
+                              std::min(A->box.max_world.z, B->box.max_world.z)
+                                  - std::max(A->box.min_world.z, B->box.min_world.z));
 
     // pick the smallest overlap of these three
     float minOverlapMagnitude = std::min(overlapX, std::min(overlapY, overlapZ));
+    if (minOverlapMagnitude <= 0.0f) {
+        return glm::vec3(0.0f);
+    }
 
     if (minOverlapMagnitude == overlapX) {
         mtv = glm::vec3(overlapX, 0, 0);

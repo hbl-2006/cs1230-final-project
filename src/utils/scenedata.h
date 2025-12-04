@@ -147,6 +147,7 @@ struct ScenePrimitive {
     PrimitiveType type;
     SceneMaterial material;
     std::string meshfile; // Used for triangle meshes
+    bool dynamic = true;  // Used for physics.
 };
 
 // Struct which contains data for a transformation.

@@ -106,6 +106,11 @@ void traverseTree(SceneNode* node,
 
         shape.body.I_obj_inv = glm::inverse(shape.body.I_obj);
 
+        // if our shape is static, give it 0 mass_inverse
+        if (!shape.primitive.dynamic) {
+            shape.body.mass_inv = 0.0f;
+        }
+
         shapes.push_back(shape);
     }
 
