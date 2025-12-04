@@ -38,7 +38,8 @@
           "type": "cube"
         }
       ],
-      "translate": [-1, 0.25, 0]
+      "translate": [-1, 0.25, 0],
+      "rotate": [0, 0, 1, 45]
     },
     {
       "name": "A lonely cube",

@@ -1,23 +1,10 @@
 #ifndef RIGID_BODY_H
 #define RIGID_BODY_H
+#include "glm/gtx/string_cast.hpp"
+#include "physics/bounding_box.h"
 #include <glm/gtc/quaternion.hpp>
-// Bounding box structure for collisions: all of our default primitives have the same bounding box in object space.
-struct BoundingBox
-{
-    glm::vec3 min_obj = glm::vec3(-0.5);
-    glm::vec3 max_obj = glm::vec3(0.5);
-    glm::vec3 obj_space_corners[8] = {{min_obj.x, min_obj.y, min_obj.z},
-                                      {min_obj.x, min_obj.y, max_obj.z},
-                                      {min_obj.x, max_obj.y, min_obj.z},
-                                      {min_obj.x, max_obj.y, max_obj.z},
-                                      {max_obj.x, min_obj.y, min_obj.z},
-                                      {max_obj.x, min_obj.y, max_obj.z},
-                                      {max_obj.x, max_obj.y, min_obj.z},
-                                      {max_obj.x, max_obj.y, max_obj.z}};
-    glm::vec3 min_world;
-    glm::vec3 max_world;
-};
-
+#include <iostream>
+#include <ostream>
 struct RigidBody
 {
     BoundingBox box;
