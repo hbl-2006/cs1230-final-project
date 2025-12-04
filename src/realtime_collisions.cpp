@@ -1,7 +1,7 @@
 #include "glm/gtx/string_cast.hpp"
 #include "realtime.h"
 #include <iostream>
-void Realtime::resolveOneCollision(RigidBody* A, RigidBody* B)
+void Realtime::resolveOneCollision(RigidBody *A, RigidBody *B)
 {
     glm::vec3 mtv = calculateMTV(A, B);
     // skip zero mtv, we don't want NaNs.
@@ -78,7 +78,7 @@ void Realtime::resolveOneCollision(RigidBody* A, RigidBody* B)
     }
 }
 
-glm::vec3 Realtime::calculateMTV(RigidBody* A, RigidBody* B)
+glm::vec3 Realtime::calculateMTV(RigidBody *A, RigidBody *B)
 {
     // First, we need to set up our separating axes.
     BoundingBox ABox = A->box;
@@ -120,45 +120,81 @@ glm::vec3 Realtime::calculateMTV(RigidBody* A, RigidBody* B)
     return mtv;
 }
 
-// Checks if a point is inside the OOB
-bool pointInOBB(const glm::vec3& point, const BoundingBox& box)
+bool pointInsideOBB(const glm::vec3 &P, const glm::vec3 axes[3], const BoundingBox &box)
 {
-    // get points coords in OOB space
-    glm::vec3 local
-        = point
-          - 0.5f
-                * (box.min_world
-                   + box.max_world); // center should be roughly equal to position in world space
-    // Project onto box axes
+    // project P onto each box axis
     for (int i = 0; i < 3; i++) {
-        float dist = glm::dot(local, box.world_space_axes[i]);
-        float halfExtent = 0.5f * glm::length(box.max_world - box.min_world);
-        // if we're >half the size away then we're outside (since we're centered at origin in local space)
-        if (abs(dist) > halfExtent)
+        float minProj = glm::dot(box.world_space_corners[0], axes[i]);
+        float maxProj = minProj;
+        for (int j = 1; j < 8; j++) {
+            float proj = glm::dot(box.world_space_corners[j], axes[i]);
+            if (proj < minProj)
+                minProj = proj;
+            if (proj > maxProj)
+                maxProj = proj;
+        }
+
+        float pProj = glm::dot(P, axes[i]);
+        if (pProj < minProj || pProj > maxProj)
             return false;
     }
     return true;
 }
 
-// Strategy for approximating contact point: average the position of the overlapping corners to get the midpoint of the overlap.
-glm::vec3 Realtime::approximateContactPoint(RigidBody* A, RigidBody* B)
+glm::vec3 Realtime::approximateContactPoint(RigidBody *A, RigidBody *B)
 {
-    std::vector<glm::vec3> contactPoints;
+    std::vector<glm::vec3> contactCandidates;
 
+    // 1. Add vertices of A inside B
     for (int i = 0; i < 8; i++) {
-        if (pointInOBB(A->box.world_space_corners[i], B->box))
-            contactPoints.push_back(A->box.world_space_corners[i]);
+        glm::vec3 v = A->box.world_space_corners[i];
+        if (pointInsideOBB(v, B->box.world_space_axes, B->box)) // see below
+            contactCandidates.push_back(v);
     }
 
+    // 2. Add vertices of B inside A
     for (int i = 0; i < 8; i++) {
-        if (pointInOBB(B->box.world_space_corners[i], A->box))
-            contactPoints.push_back(B->box.world_space_corners[i]);
+        glm::vec3 v = B->box.world_space_corners[i];
+        if (pointInsideOBB(v, A->box.world_space_axes, A->box))
+            contactCandidates.push_back(v);
     }
 
-    // Average contact points
+    // 3. Approximate edges by connecting corner pairs for each box
+    int edgePairs[12][2] = {{0, 1},
+                            {0, 2},
+                            {0, 4},
+                            {1, 3},
+                            {1, 5},
+                            {2, 3},
+                            {2, 6},
+                            {3, 7},
+                            {4, 5},
+                            {4, 6},
+                            {5, 7},
+                            {6, 7}};
+
+    auto sampleEdges = [&](BoundingBox &box, BoundingBox &other) {
+        for (int e = 0; e < 12; e++) {
+            glm::vec3 p0 = box.world_space_corners[edgePairs[e][0]];
+            glm::vec3 p1 = box.world_space_corners[edgePairs[e][1]];
+            for (float t = 0; t <= 1.0f; t += 0.25f) {
+                glm::vec3 pt = p0 + t * (p1 - p0);
+                if (pointInsideOBB(pt, other.world_space_axes, other))
+                    contactCandidates.push_back(pt);
+            }
+        }
+    };
+
+    sampleEdges(A->box, B->box);
+    sampleEdges(B->box, A->box);
+
+    // 4. Average all candidates
+    if (contactCandidates.empty()) {
+        return 0.5f * (A->position + B->position);
+    }
+
     glm::vec3 sum(0.0f);
-    for (auto& p : contactPoints)
+    for (auto &p : contactCandidates)
         sum += p;
-
-    return sum / float(contactPoints.size());
+    return sum / static_cast<float>(contactCandidates.size());
 }
