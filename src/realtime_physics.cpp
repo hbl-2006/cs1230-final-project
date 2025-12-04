@@ -103,9 +103,9 @@ void Realtime::resolveOneCollision(RigidBody *A, RigidBody *B)
     // effectively do the ctm transformation for the COM to get its position in the world.
     glm::vec3 ACOM = A->position + (A->rot_matrix * (A->scale * A->objSpaceCOM));
     glm::vec3 BCOM = B->position + (B->rot_matrix * (B->scale * B->objSpaceCOM));
-    std::cout << "ACOM: " << glm::to_string(ACOM) << std::endl;
+    // std::cout << "ACOM: " << glm::to_string(ACOM) << std::endl;
     glm::vec3 rA = contactPoint - ACOM;
-    std::cout << "RA: " << glm::to_string(rA) << std::endl;
+    // std::cout << "RA: " << glm::to_string(rA) << std::endl;
     glm::vec3 rB = contactPoint - BCOM;
     // TODO: make this not a magic number lol
     float restitution = 0.8;

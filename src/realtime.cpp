@@ -99,7 +99,47 @@ void Realtime::initializeGL() {
     initialized = true;
 }
 
-void Realtime::updateLighting(){
+void Realtime::paintGL() {
+    // Students: anything requiring OpenGL calls every frame should be done here
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glDisable(GL_BLEND);
+    glDepthMask(GL_TRUE);
+    glUseProgram(m_shader);
+    // draw each shape in our render data
+    auto worldCam = camera.getInverseViewMatrix() * glm::vec4(0, 0, 0, 1);
+    glUniform3f(glGetUniformLocation(m_shader, "camPos"), worldCam.x, worldCam.y, worldCam.z);
+    for (auto &shape : metadata.shapes) {
+        drawShape(shape);
+    }
+    glUseProgram(0);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    glDepthMask(GL_FALSE);
+    particles.render(camera.getViewMatrix(), camera.getProjectionMatrix());
+    glDisable(GL_BLEND);
+    glDepthMask(GL_TRUE);
+}
+
+void Realtime::resizeGL(int w, int h) {
+    // Tells OpenGL how big the screen is
+    glViewport(0, 0, size().width() * m_devicePixelRatio, size().height() * m_devicePixelRatio);
+
+    // Students: anything requiring OpenGL calls when the program starts should be done here
+}
+
+void Realtime::sceneChanged() {
+    // update our metadata with the new scenefile
+    bool success = SceneParser::parse(settings.sceneFilePath, metadata);
+    camera = Camera(metadata.cameraData,
+                    size().width(),
+                    size().height(),
+                    settings.nearPlane,
+                    settings.farPlane);
+    camera.setPathTime(0.0f);
+
+    // Populate our shader uniforms
+    glUseProgram(m_shader);
     glUniform1f(glGetUniformLocation(m_shader, "ambient"), metadata.globalData.ka);
     glUniform1f(glGetUniformLocation(m_shader, "diffuse"), metadata.globalData.kd);
     glUniform1f(glGetUniformLocation(m_shader, "specular"), metadata.globalData.ks);
@@ -153,49 +193,6 @@ void Realtime::updateLighting(){
             = glGetUniformLocation(m_shader, ("lights[" + std::to_string(i) + "].penumbra").c_str());
         glUniform1f(penumbraLoc, light.penumbra);
     }
-}
-
-void Realtime::paintGL() {
-    // Students: anything requiring OpenGL calls every frame should be done here
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glDisable(GL_BLEND);
-    glDepthMask(GL_TRUE);
-    glUseProgram(m_shader);
-    // draw each shape in our render data
-    updateLighting();
-    for (auto &shape : metadata.shapes) {
-        drawShape(shape);
-    }
-    glUseProgram(0);
-
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-    glDepthMask(GL_FALSE);
-    particles.render(camera.getViewMatrix(), camera.getProjectionMatrix());
-    glDisable(GL_BLEND);
-    glDepthMask(GL_TRUE);
-}
-
-void Realtime::resizeGL(int w, int h) {
-    // Tells OpenGL how big the screen is
-    glViewport(0, 0, size().width() * m_devicePixelRatio, size().height() * m_devicePixelRatio);
-
-    // Students: anything requiring OpenGL calls when the program starts should be done here
-}
-
-void Realtime::sceneChanged() {
-    // update our metadata with the new scenefile
-    bool success = SceneParser::parse(settings.sceneFilePath, metadata);
-    camera = Camera(metadata.cameraData,
-                    size().width(),
-                    size().height(),
-                    settings.nearPlane,
-                    settings.farPlane);
-    camera.setPathTime(0.0f);
-
-    // Populate our shader uniforms
-    glUseProgram(m_shader);
-    updateLighting();
     glUseProgram(0);
 
     if (!success) {
