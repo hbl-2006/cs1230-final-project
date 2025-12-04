@@ -38,7 +38,7 @@
           "type": "cube"
         }
       ],
-      "translate": [-1, 0, 0]
+      "translate": [-1, 0.4, 0]
     },
     {
       "name": "A lonely cube",
@@ -50,7 +50,7 @@
           "type": "cube"
         }
       ],
-      "translate": [1, 0, 0]
+      "translate": [1, -0.4, 0]
     }
   ]
 }

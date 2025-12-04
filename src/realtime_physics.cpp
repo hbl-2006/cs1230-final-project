@@ -1,11 +1,12 @@
+#include "glm/gtx/string_cast.hpp"
 #include "realtime.h"
+#include <iostream>
 
 void Realtime::stepPhysics(float deltaTime)
 {
     for (auto &shape : metadata.shapes) {
         RigidBody &body = shape.body;
         // step through physics, which will update our position and rotation matrix. remake ctm and inverse ctm!
-        body.addForce(glm::vec3(0, -1, 0));
         bool stepped = body.physicsStep(deltaTime);
         if (stepped) {
             shape.ctm = glm::translate(glm::mat4(1.0f), body.position) * glm::mat4(body.rot_matrix)
@@ -98,24 +99,69 @@ void Realtime::resolveOneCollision(RigidBody *A, RigidBody *B)
     // We now have the actual cases where we resolve collisions!
     glm::vec3 normalizedMTV = glm::normalize(mtv);
     float scalarRelativeVelocity = glm::dot(A->velocity - B->velocity, normalizedMTV);
+    glm::vec3 contactPoint = approximateContactPoint(A, B);
+    // effectively do the ctm transformation for the COM to get its position in the world.
+    glm::vec3 ACOM = A->position + (A->rot_matrix * (A->scale * A->objSpaceCOM));
+    glm::vec3 BCOM = B->position + (B->rot_matrix * (B->scale * B->objSpaceCOM));
+    std::cout << "ACOM: " << glm::to_string(ACOM) << std::endl;
+    glm::vec3 rA = contactPoint - ACOM;
+    std::cout << "RA: " << glm::to_string(rA) << std::endl;
+    glm::vec3 rB = contactPoint - BCOM;
     // TODO: make this not a magic number lol
     float restitution = 0.8;
     if (A->mass_inv == 0) {
         B->position += mtv;
-        glm::vec3 impulse = normalizedMTV * (scalarRelativeVelocity * (1 + restitution) * B->mass);
+        // scalar impulse formula taken from SIGGRAPH notes 2 on rigid body constraints, page 17, but A is gone in the limit
+        float numerator = (1 + restitution) * scalarRelativeVelocity;
+        float denominator = B->mass_inv
+                            + glm::dot(-normalizedMTV,
+                                       glm::cross(rB,
+                                                  B->I_world_inv * glm::cross(rB, normalizedMTV)));
+        float scalarImpulse = numerator / denominator;
+        glm::vec3 impulse = normalizedMTV * scalarImpulse;
         B->addImpulse(impulse);
+        // Torque is distance x force, so angular impulse is distance x linear impulse by analogy
+        glm::vec3 angularImpulse = glm::cross(rB, impulse);
+        B->addAngularImpulse(angularImpulse);
     } else if (B->mass_inv == 0) {
-        A->position += mtv;
-        glm::vec3 impulse = normalizedMTV * (scalarRelativeVelocity * (1 + restitution) * A->mass);
+        // the mtv points away from A, so we need to flip these.
+        A->position -= mtv;
+        // scalar impulse formula taken from SIGGRAPH notes 2 on rigid body constraints, page 17, but B is gone in the limit
+        float numerator = (1 + restitution) * scalarRelativeVelocity;
+        float denominator = A->mass_inv
+                            + glm::dot(-normalizedMTV,
+                                       glm::cross(rA,
+                                                  A->I_world_inv * glm::cross(rA, normalizedMTV)));
+        float scalarImpulse = numerator / denominator;
+        // negative MTV direction for A, since mtv by convention points towards B
+        glm::vec3 impulse = -normalizedMTV * scalarImpulse;
         A->addImpulse(impulse);
+        // Torque is distance x force, so angular impulse is distance x linear impulse by analogy
+        glm::vec3 angularImpulse = glm::cross(rA, impulse);
+        A->addAngularImpulse(angularImpulse);
     } else {
         A->position -= mtv / 2.0f;
         B->position += mtv / 2.0f;
-        float scalarImpulse = ((A->mass * B->mass) * scalarRelativeVelocity * (1 + restitution))
-                              / (A->mass + B->mass);
+        // scalar impulse formula taken from SIGGRAPH notes 2 on rigid body constraints, page 17
+        float numerator = (1 + restitution) * scalarRelativeVelocity;
+        float denominator = A->mass_inv + B->mass_inv
+                            + glm::dot(-normalizedMTV,
+                                       glm::cross(rA,
+                                                  A->I_world_inv * glm::cross(rA, normalizedMTV)))
+                            + glm::dot(-normalizedMTV,
+                                       glm::cross(rB,
+                                                  B->I_world_inv * glm::cross(rB, normalizedMTV)));
+        float scalarImpulse = numerator / denominator;
         glm::vec3 impulse = normalizedMTV * scalarImpulse;
         A->addImpulse(-impulse);
         B->addImpulse(impulse);
+
+        // Torque is distance x force, so angular impulse is distance x linear impulse by analogy
+        glm::vec3 angularImpulseA = glm::cross(rA, -impulse);
+        A->addAngularImpulse(angularImpulseA);
+
+        glm::vec3 angularImpulseB = glm::cross(rB, impulse);
+        B->addAngularImpulse(angularImpulseB);
     }
 }
 
@@ -157,4 +203,29 @@ glm::vec3 Realtime::calculateMTV(RigidBody *A, RigidBody *B)
         mtv = -mtv;
 
     return mtv;
+}
+
+glm::vec3 Realtime::approximateContactPoint(RigidBody *A, RigidBody *B)
+{
+    glm::vec3 Amin = A->box.min_world;
+    glm::vec3 Amax = A->box.max_world;
+    glm::vec3 Bmin = B->box.min_world;
+    glm::vec3 Bmax = B->box.max_world;
+
+    // We know the objects overlap on all three axes, so we can get the region in which they overlap by
+    // creating the box bounded by (minX, minY, minZ) and (maxX, maxY, maxZ)
+
+    // Overlap is from higher min -> smaller max
+    float xOverlapMin = std::max(Amin.x, Bmin.x);
+    float yOverlapMin = std::max(Amin.y, Bmin.y);
+    float zOverlapMin = std::max(Amin.z, Bmin.z);
+    float xOverlapMax = std::min(Amax.x, Bmax.x);
+    float yOverlapMax = std::min(Amax.y, Bmax.y);
+    float zOverlapMax = std::min(Amax.z, Bmax.z);
+
+    glm::vec3 contactRegionMin(xOverlapMin, yOverlapMin, zOverlapMin);
+    glm::vec3 contactRegionMax(xOverlapMax, yOverlapMax, zOverlapMax);
+
+    // approximate contact point by taking the middle of this region
+    return 0.5f * (contactRegionMax + contactRegionMin);
 }

@@ -101,4 +101,5 @@ private:
     void sweepAndPrune();
     void resolveOneCollision(RigidBody *A, RigidBody *B);
     glm::vec3 calculateMTV(RigidBody *A, RigidBody *B);
+    glm::vec3 approximateContactPoint(RigidBody *A, RigidBody *B);
 };

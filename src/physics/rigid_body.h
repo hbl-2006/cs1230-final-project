@@ -27,6 +27,9 @@ struct RigidBody
     glm::mat3 I_obj;
     glm::mat3 I_obj_inv;
 
+    glm::vec3 objSpaceCOM = glm::vec3(0.0f);
+    glm::vec3 scale;
+
     glm::vec3 position;
     glm::quat orientation;
     glm::vec3 linear_momentum;

@@ -69,9 +69,12 @@ void traverseTree(SceneNode* node,
     // If we have any primitives here, attach them to the shapes data with this ctm.
     for (auto* primitive : node->primitives) {
         auto shape = RenderShapeData(*primitive, ctm, glm::inverse(ctm));
+        shape.scale = scale_matrix;
+
+        // grab the initial parameters for the rigid body: useful later when doing physics!
         shape.body.position = glm::vec3(ctm[3]);
         shape.body.orientation = glm::normalize(glm::quat_cast(rot_matrix));
-        shape.scale = scale_matrix;
+        shape.body.scale = glm::vec3(scale_matrix[0][0], scale_matrix[1][1], scale_matrix[2][2]);
 
         switch (primitive->type) {
         case PrimitiveType::PRIMITIVE_CUBE:
@@ -86,6 +89,8 @@ void traverseTree(SceneNode* node,
             shape.body.I_obj = glm::mat3(glm::vec3(intermediate_xy, 0, 0),
                                          glm::vec3(0, intermediate_xy, 0),
                                          glm::vec3(0, 0, 0.3f * shape.body.mass * 0.5f * 0.5f));
+            // A cone's center of mass is 1/4 of the way up it
+            shape.body.objSpaceCOM = glm::vec3(0, -0.25, 0);
             break;
         }
         case PrimitiveType::PRIMITIVE_CYLINDER: {

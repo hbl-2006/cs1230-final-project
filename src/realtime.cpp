@@ -202,6 +202,8 @@ void Realtime::sceneChanged() {
         std::cerr << "Error loading scene: \"" << settings.sceneFilePath << "\"" << std::endl;
         exit(1);
     }
+    metadata.shapes[0].body.addImpulse(glm::vec3(1, 0, 0));
+    metadata.shapes[1].body.addImpulse(glm::vec3(-1, 0, 0));
     update(); // asks for a PaintGL() call to occur
 }
 
