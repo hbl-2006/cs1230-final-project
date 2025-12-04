@@ -99,13 +99,15 @@ void Realtime::resolveOneCollision(RigidBody *A, RigidBody *B)
     // We now have the actual cases where we resolve collisions!
     glm::vec3 normalizedMTV = glm::normalize(mtv);
     float scalarRelativeVelocity = glm::dot(A->velocity - B->velocity, normalizedMTV);
+    if (scalarRelativeVelocity < 0) {
+        // don't collide if they're moving apart.
+        return;
+    }
     glm::vec3 contactPoint = approximateContactPoint(A, B);
     // effectively do the ctm transformation for the COM to get its position in the world.
     glm::vec3 ACOM = A->position + (A->rot_matrix * (A->scale * A->objSpaceCOM));
     glm::vec3 BCOM = B->position + (B->rot_matrix * (B->scale * B->objSpaceCOM));
-    std::cout << "ACOM: " << glm::to_string(ACOM) << std::endl;
     glm::vec3 rA = contactPoint - ACOM;
-    std::cout << "RA: " << glm::to_string(rA) << std::endl;
     glm::vec3 rB = contactPoint - BCOM;
     // TODO: make this not a magic number lol
     float restitution = 0.8;
@@ -113,11 +115,9 @@ void Realtime::resolveOneCollision(RigidBody *A, RigidBody *B)
         B->position += mtv;
         // scalar impulse formula taken from SIGGRAPH notes 2 on rigid body constraints, page 17, but A is gone in the limit
         float numerator = (1 + restitution) * scalarRelativeVelocity;
-        float denominator = B->mass_inv
-                            + glm::dot(-normalizedMTV,
-                                       glm::cross(rB,
-                                                  B->I_world_inv * glm::cross(rB, normalizedMTV)));
-        float scalarImpulse = numerator / denominator;
+        glm::vec3 rbCrossN = glm::cross(rB, normalizedMTV);
+        float rotTermB = glm::dot(rbCrossN, B->I_world_inv * rbCrossN);
+        float scalarImpulse = numerator / (B->mass_inv + rotTermB);
         glm::vec3 impulse = normalizedMTV * scalarImpulse;
         B->addImpulse(impulse);
         // Torque is distance x force, so angular impulse is distance x linear impulse by analogy
@@ -128,11 +128,9 @@ void Realtime::resolveOneCollision(RigidBody *A, RigidBody *B)
         A->position -= mtv;
         // scalar impulse formula taken from SIGGRAPH notes 2 on rigid body constraints, page 17, but B is gone in the limit
         float numerator = (1 + restitution) * scalarRelativeVelocity;
-        float denominator = A->mass_inv
-                            + glm::dot(-normalizedMTV,
-                                       glm::cross(rA,
-                                                  A->I_world_inv * glm::cross(rA, normalizedMTV)));
-        float scalarImpulse = numerator / denominator;
+        glm::vec3 raCrossN = glm::cross(rA, normalizedMTV);
+        float rotTermA = glm::dot(raCrossN, A->I_world_inv * raCrossN);
+        float scalarImpulse = numerator / (A->mass_inv + rotTermA);
         // negative MTV direction for A, since mtv by convention points towards B
         glm::vec3 impulse = -normalizedMTV * scalarImpulse;
         A->addImpulse(impulse);
@@ -143,14 +141,12 @@ void Realtime::resolveOneCollision(RigidBody *A, RigidBody *B)
         A->position -= mtv / 2.0f;
         B->position += mtv / 2.0f;
         // scalar impulse formula taken from SIGGRAPH notes 2 on rigid body constraints, page 17
+        glm::vec3 raCrossN = glm::cross(rA, normalizedMTV);
+        glm::vec3 rbCrossN = glm::cross(rB, normalizedMTV);
+        float rotTermA = glm::dot(raCrossN, A->I_world_inv * raCrossN);
+        float rotTermB = glm::dot(rbCrossN, B->I_world_inv * rbCrossN);
         float numerator = (1 + restitution) * scalarRelativeVelocity;
-        float denominator = A->mass_inv + B->mass_inv
-                            + glm::dot(-normalizedMTV,
-                                       glm::cross(rA,
-                                                  A->I_world_inv * glm::cross(rA, normalizedMTV)))
-                            + glm::dot(-normalizedMTV,
-                                       glm::cross(rB,
-                                                  B->I_world_inv * glm::cross(rB, normalizedMTV)));
+        float denominator = A->mass_inv + B->mass_inv + rotTermA + rotTermB;
         float scalarImpulse = numerator / denominator;
         glm::vec3 impulse = normalizedMTV * scalarImpulse;
         A->addImpulse(-impulse);
