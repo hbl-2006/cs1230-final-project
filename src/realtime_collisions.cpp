@@ -145,21 +145,20 @@ glm::vec3 Realtime::approximateContactPoint(RigidBody *A, RigidBody *B)
 {
     std::vector<glm::vec3> contactCandidates;
 
-    // 1. Add vertices of A inside B
+    // first just check if any vertex is inside the other box: easy
     for (int i = 0; i < 8; i++) {
         glm::vec3 v = A->box.world_space_corners[i];
-        if (pointInsideOBB(v, B->box.world_space_axes, B->box)) // see below
+        if (pointInsideOBB(v, B->box.world_space_axes, B->box))
             contactCandidates.push_back(v);
     }
 
-    // 2. Add vertices of B inside A
     for (int i = 0; i < 8; i++) {
         glm::vec3 v = B->box.world_space_corners[i];
         if (pointInsideOBB(v, A->box.world_space_axes, A->box))
             contactCandidates.push_back(v);
     }
 
-    // 3. Approximate edges by connecting corner pairs for each box
+    // for our edges, we have each pair of corners
     int edgePairs[12][2] = {{0, 1},
                             {0, 2},
                             {0, 4},
@@ -173,6 +172,7 @@ glm::vec3 Realtime::approximateContactPoint(RigidBody *A, RigidBody *B)
                             {5, 7},
                             {6, 7}};
 
+    // function that samples points along the edges to look for potential contacts
     auto sampleEdges = [&](BoundingBox &box, BoundingBox &other) {
         for (int e = 0; e < 12; e++) {
             glm::vec3 p0 = box.world_space_corners[edgePairs[e][0]];
@@ -188,13 +188,9 @@ glm::vec3 Realtime::approximateContactPoint(RigidBody *A, RigidBody *B)
     sampleEdges(A->box, B->box);
     sampleEdges(B->box, A->box);
 
-    // 4. Average all candidates
-    if (contactCandidates.empty()) {
-        return 0.5f * (A->position + B->position);
-    }
-
+    // average every potential contact point to get an overall estimate for contact.
     glm::vec3 sum(0.0f);
     for (auto &p : contactCandidates)
         sum += p;
-    return sum / static_cast<float>(contactCandidates.size());
+    return sum / (float) contactCandidates.size();
 }
