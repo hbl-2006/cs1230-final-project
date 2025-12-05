@@ -1,6 +1,4 @@
-#include "glm/gtx/string_cast.hpp"
 #include "realtime.h"
-#include <iostream>
 void Realtime::resolveOneCollision(RigidBody *A, RigidBody *B)
 {
     glm::vec3 mtv = calculateMTV(A, B);

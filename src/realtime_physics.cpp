@@ -1,6 +1,4 @@
-#include "glm/gtx/string_cast.hpp"
 #include "realtime.h"
-#include <iostream>
 
 void Realtime::stepPhysics(float deltaTime)
 {
