@@ -9,6 +9,7 @@
 struct RenderShapeData {
     ScenePrimitive primitive;
     glm::mat4 ctm; // the cumulative transformation matrix
+    glm::mat4 last_ctm;    // previous frame's ctm, for optimization
     glm::mat4 inverse_ctm; // the inverse ctm
     glm::mat4 scale;       // the scale matrix, needed for when we recalculate the ctm later.
     RigidBody body;        // the rigid body for physics

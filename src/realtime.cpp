@@ -131,6 +131,18 @@ void Realtime::resizeGL(int w, int h) {
 void Realtime::sceneChanged() {
     // update our metadata with the new scenefile
     bool success = SceneParser::parse(settings.sceneFilePath, metadata);
+  
+    // update our list of sortedBodies
+    sortedBodies.clear();
+    for (auto &shape : metadata.shapes) {
+        sortedBodies.push_back(&(shape.body));
+    }
+    camera = Camera(metadata.cameraData,
+                    size().width(),
+                    size().height(),
+                    settings.nearPlane,
+                    settings.farPlane);
+  
     camera = Camera(metadata.cameraData,
                     size().width(),
                     size().height(),
@@ -199,8 +211,7 @@ void Realtime::sceneChanged() {
         std::cerr << "Error loading scene: \"" << settings.sceneFilePath << "\"" << std::endl;
         exit(1);
     }
-    metadata.shapes[0].body.addImpulse(glm::vec3(1, 0, 0));
-    metadata.shapes[1].body.addImpulse(glm::vec3(-1, 0, 0));
+    //metadata.shapes[0].body.addImpulse(glm::vec3(1, 0, 0));
     update(); // asks for a PaintGL() call to occur
 }
 
@@ -291,6 +302,17 @@ void Realtime::timerEvent(QTimerEvent *event) {
     }
     prevP = m_keyMap[Qt::Key_P];
 
+    if (m_keyMap[Qt::Key_O] && !prevO) {
+        metadata.shapes[9].body.addImpulse(glm::vec3(1, 0, 0));
+        metadata.shapes[9].body.addAngularImpulse(glm::vec3(0, 0, -1));
+    }
+    prevO = m_keyMap[Qt::Key_O];
+
+    if (m_keyMap[Qt::Key_G] && !prevG) {
+        gravity = !gravity;
+    }
+    prevG = m_keyMap[Qt::Key_G];
+
     if (!camera.useCameraPathEnabled()) {
         auto worldSpaceVec = glm::vec3(0);
         if (m_keyMap[Qt::Key_Space]) {
@@ -330,8 +352,15 @@ void Realtime::timerEvent(QTimerEvent *event) {
 
     // Physics updates: before we draw! Additionally, update the ctm before drawing.
     if (metadata.shapes.size() > 0) {
-        stepPhysics(deltaTime);
-        resolveCollisions();
+        float substep = 0.005f; // split physics ticks into 5ms set timesteps.
+        float timeLeft = deltaTime;
+
+        while (timeLeft > 0) {
+            float dt = std::min(substep, timeLeft);
+            stepPhysics(dt);
+            resolveCollisions();
+            timeLeft -= dt;
+        }
     }
     update(); // asks for a PaintGL() call to occur
 }

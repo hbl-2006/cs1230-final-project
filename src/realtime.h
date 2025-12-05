@@ -46,6 +46,8 @@ private:
     Camera camera;
     CameraPath cameraPath;
     bool prevP;
+    bool prevO;
+    bool prevG;
 
     // enum for each shape to make accessing stuff easier.
     enum ShapeNames { SPHERE, CONE, CUBE, CYLINDER };
@@ -94,6 +96,8 @@ private:
     ParticleSystem particles;
 
     // Physics
+    bool gravity = false;
+    std::vector<RigidBody *> sortedBodies;
     void stepPhysics(float deltaTime);
     void resolveCollisions();
     void updateBoundingBoxes();

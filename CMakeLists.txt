@@ -57,6 +57,8 @@ add_executable(${PROJECT_NAME}
     src/camera/cameraPathTest.h
     src/particles/particleSystem.cpp
     src/particles/particleSystem.h
+    src/realtime_collisions.cpp
+    src/physics/bounding_box.h
 )
 
 # GLM: this creates its library and allows you to `#include "glm/..."`
