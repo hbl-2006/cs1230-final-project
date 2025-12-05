@@ -4,10 +4,10 @@
 void Realtime::resolveOneCollision(RigidBody *A, RigidBody *B)
 {
     glm::vec3 mtv = calculateMTV(A, B);
-    // skip zero mtv, we don't want NaNs.
-    if (mtv == glm::vec3(0.0f)) {
+    // skip tiny mtv, we don't want NaNs.
+    if (glm::length(mtv) < 1e-6f)
         return;
-    }
+
     // We have cases here: both are static, one is static, or neither is static.
     if (A->mass_inv == 0 && B->mass_inv == 0) {
         // Two static objects colliding doesn't actually do anything, since they can't move.
@@ -34,7 +34,10 @@ void Realtime::resolveOneCollision(RigidBody *A, RigidBody *B)
         float numerator = (1 + restitution) * scalarRelativeVelocity;
         glm::vec3 rbCrossN = glm::cross(rB, normalizedMTV);
         float rotTermB = glm::dot(rbCrossN, B->I_world_inv * rbCrossN);
-        float scalarImpulse = numerator / (B->mass_inv + rotTermB);
+        float denominator = (B->mass_inv + rotTermB);
+        if (denominator < 1e-6f)
+            denominator = 1e-6f;
+        float scalarImpulse = numerator / denominator;
         glm::vec3 impulse = normalizedMTV * scalarImpulse;
         B->addImpulse(impulse);
         // Torque is distance x force, so angular impulse is distance x linear impulse by analogy
@@ -47,7 +50,11 @@ void Realtime::resolveOneCollision(RigidBody *A, RigidBody *B)
         float numerator = (1 + restitution) * scalarRelativeVelocity;
         glm::vec3 raCrossN = glm::cross(rA, normalizedMTV);
         float rotTermA = glm::dot(raCrossN, A->I_world_inv * raCrossN);
-        float scalarImpulse = numerator / (A->mass_inv + rotTermA);
+        // make sure denominator isn't zero
+        float denominator = (A->mass_inv + rotTermA);
+        if (denominator < 1e-6f)
+            denominator = 1e-6f;
+        float scalarImpulse = numerator / denominator;
         // negative MTV direction for A, since mtv by convention points towards B
         glm::vec3 impulse = -normalizedMTV * scalarImpulse;
         A->addImpulse(impulse);
@@ -64,6 +71,9 @@ void Realtime::resolveOneCollision(RigidBody *A, RigidBody *B)
         float rotTermB = glm::dot(rbCrossN, B->I_world_inv * rbCrossN);
         float numerator = (1 + restitution) * scalarRelativeVelocity;
         float denominator = A->mass_inv + B->mass_inv + rotTermA + rotTermB;
+        // make sure denominator isn't zero
+        if (denominator < 1e-6f)
+            denominator = 1e-6f;
         float scalarImpulse = numerator / denominator;
         glm::vec3 impulse = normalizedMTV * scalarImpulse;
         A->addImpulse(-impulse);
@@ -120,22 +130,13 @@ glm::vec3 Realtime::calculateMTV(RigidBody *A, RigidBody *B)
     return mtv;
 }
 
-bool pointInsideOBB(const glm::vec3 &P, const glm::vec3 axes[3], const BoundingBox &box)
+bool pointInsideOBB(const glm::vec3 &P, const BoundingBox &box, glm::vec3 center)
 {
-    // project P onto each box axis
-    for (int i = 0; i < 3; i++) {
-        float minProj = glm::dot(box.world_space_corners[0], axes[i]);
-        float maxProj = minProj;
-        for (int j = 1; j < 8; j++) {
-            float proj = glm::dot(box.world_space_corners[j], axes[i]);
-            if (proj < minProj)
-                minProj = proj;
-            if (proj > maxProj)
-                maxProj = proj;
-        }
+    glm::vec3 d = P - center;
 
-        float pProj = glm::dot(P, axes[i]);
-        if (pProj < minProj || pProj > maxProj)
+    for (int i = 0; i < 3; i++) {
+        float dist = glm::dot(d, box.world_space_axes[i]);
+        if (fabs(dist) > box.world_space_halfWidth[i])
             return false;
     }
     return true;
@@ -148,13 +149,13 @@ glm::vec3 Realtime::approximateContactPoint(RigidBody *A, RigidBody *B)
     // first just check if any vertex is inside the other box: easy
     for (int i = 0; i < 8; i++) {
         glm::vec3 v = A->box.world_space_corners[i];
-        if (pointInsideOBB(v, B->box.world_space_axes, B->box))
+        if (pointInsideOBB(v, B->box, B->position))
             contactCandidates.push_back(v);
     }
 
     for (int i = 0; i < 8; i++) {
         glm::vec3 v = B->box.world_space_corners[i];
-        if (pointInsideOBB(v, A->box.world_space_axes, A->box))
+        if (pointInsideOBB(v, A->box, A->position))
             contactCandidates.push_back(v);
     }
 
@@ -173,20 +174,28 @@ glm::vec3 Realtime::approximateContactPoint(RigidBody *A, RigidBody *B)
                             {6, 7}};
 
     // function that samples points along the edges to look for potential contacts
-    auto sampleEdges = [&](BoundingBox &box, BoundingBox &other) {
+    auto sampleEdges = [&](const RigidBody *body, const RigidBody *other) {
         for (int e = 0; e < 12; e++) {
-            glm::vec3 p0 = box.world_space_corners[edgePairs[e][0]];
-            glm::vec3 p1 = box.world_space_corners[edgePairs[e][1]];
-            for (float t = 0; t <= 1.0f; t += 0.25f) {
+            glm::vec3 p0 = body->box.world_space_corners[edgePairs[e][0]];
+            glm::vec3 p1 = body->box.world_space_corners[edgePairs[e][1]];
+            for (float t : {0.0f, 0.5f, 1.0f}) {
                 glm::vec3 pt = p0 + t * (p1 - p0);
-                if (pointInsideOBB(pt, other.world_space_axes, other))
+                if (pointInsideOBB(pt, other->box, other->position))
                     contactCandidates.push_back(pt);
             }
         }
     };
 
-    sampleEdges(A->box, B->box);
-    sampleEdges(B->box, A->box);
+    // only check edges if we havent found any candidates yet
+    if (contactCandidates.empty()) {
+        sampleEdges(A, B);
+        sampleEdges(B, A);
+    }
+
+    if (contactCandidates.empty()) {
+        // if we're STILL empty, just use midpoint between centers
+        return 0.5f * (A->position + B->position);
+    }
 
     // average every potential contact point to get an overall estimate for contact.
     glm::vec3 sum(0.0f);

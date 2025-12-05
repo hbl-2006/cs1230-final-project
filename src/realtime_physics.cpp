@@ -7,7 +7,9 @@ void Realtime::stepPhysics(float deltaTime)
     for (auto &shape : metadata.shapes) {
         RigidBody &body = shape.body;
         // step through physics, which will update our position and rotation matrix. remake ctm and inverse ctm!
-        body.addForce(glm::vec3(0, -1, 0));
+        if (gravity) {
+            body.addForce(glm::vec3(0, -3, 0));
+        }
         bool stepped = body.physicsStep(deltaTime);
         if (stepped) {
             shape.ctm = glm::translate(glm::mat4(1.0f), body.position) * glm::mat4(body.rot_matrix)
@@ -25,55 +27,55 @@ void Realtime::resolveCollisions()
     sweepAndPrune();
 }
 
-void Realtime::updateBoundingBoxes()
+inline void Realtime::updateBoundingBoxes()
 {
     for (auto &shape : metadata.shapes) {
+        if (shape.ctm == shape.last_ctm)
+            continue;
+        shape.last_ctm = shape.ctm;
         RigidBody &body = shape.body;
         BoundingBox &box = body.box;
-        glm::vec3 init = glm::vec3(shape.ctm * glm::vec4(box.obj_space_corners[0], 1));
-        box.world_space_corners[0] = init;
-        glm::vec3 min = init;
-        glm::vec3 max = init;
-        for (int i = 1; i < 8; i++) {
-            auto worldVec = glm::vec3(shape.ctm * glm::vec4(box.obj_space_corners[i], 1));
-            box.world_space_corners[i] = worldVec;
-            // Take the element-wise min and max of our current min and max with this vector, eventually builds
-            // world space min+max
-            min = glm::min(min, worldVec);
-            max = glm::max(max, worldVec);
-        }
-        // set up big AABB for the sweep and prune.
-        box.min_world = min;
-        box.max_world = max;
+        //extract features from ctm to avoid 4x4 matmuls, optimization
+        glm::mat3 linear = glm::mat3(shape.ctm);
+        glm::vec3 translation = glm::vec3(shape.ctm[3]);
 
         // set up rotated box by setting its world-space basis axes.
-        box.world_space_axes[0] = glm::normalize(box.world_space_corners[4]
-                                                 - box.world_space_corners[0]);
-        box.world_space_axes[1] = glm::normalize(box.world_space_corners[2]
-                                                 - box.world_space_corners[0]);
-        box.world_space_axes[2] = glm::normalize(box.world_space_corners[1]
-                                                 - box.world_space_corners[0]);
+        box.world_space_axes[0] = glm::normalize(linear[0]);
+        box.world_space_axes[1] = glm::normalize(linear[1]);
+        box.world_space_axes[2] = glm::normalize(linear[2]);
+        // We don't care about rotation and translation for half width, but we do for scale.
+        box.world_space_halfWidth = glm::mat3(shape.scale) * box.obj_space_halfWidth;
+
+        // Get world space corners by multiplying linear transformation then adding translation.
+        for (int i = 0; i < 8; ++i) {
+            glm::vec3 corner = box.obj_space_corners[i];
+            box.world_space_corners[i] = linear * corner + translation;
+        }
+
+        // Figure out extents of our OBB, then wrap it in a big AABB for sweep and prune.
+        glm::vec3 min = box.world_space_corners[0];
+        glm::vec3 max = min;
+        for (int i = 1; i < 8; ++i) {
+            min = glm::min(min, box.world_space_corners[i]);
+            max = glm::max(max, box.world_space_corners[i]);
+        }
+        box.min_world = min;
+        box.max_world = max;
     }
 }
 
 void Realtime::sweepAndPrune()
 {
-    std::vector<RigidBody *> sorted;
-    sorted.reserve(metadata.shapes.size());
-    for (auto &shape : metadata.shapes) {
-        sorted.push_back(&(shape.body));
-    }
-
     // Sort along one axis, this gives us a chance to exit checks early.
-    std::sort(sorted.begin(), sorted.end(), [](const RigidBody *a, const RigidBody *b) {
+    std::sort(sortedBodies.begin(), sortedBodies.end(), [](const RigidBody *a, const RigidBody *b) {
         return a->box.min_world.x < b->box.min_world.x;
     });
 
-    for (int i = 0; i < sorted.size(); i++) {
-        RigidBody *A = sorted[i];
+    for (int i = 0; i < sortedBodies.size(); i++) {
+        RigidBody *A = sortedBodies[i];
         // Inner loop structured such that we check each pair only once.
-        for (int j = i + 1; j < sorted.size(); j++) {
-            RigidBody *B = sorted[j];
+        for (int j = i + 1; j < sortedBodies.size(); j++) {
+            RigidBody *B = sortedBodies[j];
             // Key optimization: if o2's min is greater than o1's max, and we're sorted,
             // no objects past this point will ever collide
             if (B->box.min_world.x > A->box.max_world.x) {

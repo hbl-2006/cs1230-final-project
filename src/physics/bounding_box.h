@@ -35,10 +35,12 @@ struct BoundingBox
                                       {max_obj.x, min_obj.y, max_obj.z},
                                       {max_obj.x, max_obj.y, min_obj.z},
                                       {max_obj.x, max_obj.y, max_obj.z}};
+    glm::vec3 obj_space_halfWidth = glm::vec3(0.5);
     glm::vec3 min_world;
     glm::vec3 max_world;
     glm::vec3 world_space_corners[8];
     glm::vec3 world_space_axes[3];
+    glm::vec3 world_space_halfWidth;
 
     // Taken from Game Physics Cookbook - returns the projection of our box along an axis.
     Interval getInterval(glm::vec3 axis) const
