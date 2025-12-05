@@ -35,7 +35,7 @@ private:
     GLuint m_shader = 0;
 
     int m_maxParticles = 200000;
-    int m_spawnPerSecond = 1000;
+    int m_spawnPerSecond = 10000;
     float m_newParticles = 0.0f;
     float m_maxLifeTime = 1.5f;
     float m_particleSize = 0.1f;

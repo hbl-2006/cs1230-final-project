@@ -37,7 +37,6 @@ protected:
     void initializeGL() override;                       // Called once at the start of the program
     void paintGL() override;                            // Called whenever the OpenGL context changes or by an update() request
     void resizeGL(int width, int height) override;      // Called when window size changes
-    void updateLighting();
 
 private:
     bool initialized = false;
