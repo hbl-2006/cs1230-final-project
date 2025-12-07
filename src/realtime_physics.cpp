@@ -8,7 +8,7 @@ void Realtime::stepPhysics(float deltaTime)
         if (forces) {
             body.addForce(glm::vec3(0, -3, 0));
             body.addForce(-0.5f * body.velocity);
-            body.addTorque(-0.5f * body.omega);
+            // body.addTorque(-0.5f * body.omega);
         }
         bool stepped = body.physicsStep(deltaTime);
         if (stepped) {
