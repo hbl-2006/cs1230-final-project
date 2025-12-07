@@ -13,7 +13,9 @@ class ParticleSystem {
 public:
     ParticleSystem();
     void initialize();
-    void updateParticles(float dt);
+    void spawnFireParticles(float dt);
+    void updateAllParticles(float dt);
+    void spawnDustParticles(const glm::vec3 &pos, float scalarImpulse);
     void render(const glm::mat4 &viewMatrix, const glm::mat4 &projMatrix);
     void finish();
 
@@ -24,22 +26,33 @@ private:
         float upAcceleration;
         float currLife;
         float maxLife;
+        int particleType; // 0 for fire, 1 for dust
+        float xDir;
+        float zDir;
+    };
+
+    struct GPUParticle {
+        glm::vec3 position;
+        float lifeFraction;
+        float particleType; // 0 for fire, 1 for dust
     };
 
     std::vector<Particle> m_particles;
-    std::vector<glm::vec4> m_particleData;
+    std::vector<GPUParticle> m_particleData;
 
     GLuint m_billboardVBO = 0;
     GLuint m_particleVBO = 0;
     GLuint m_VAO = 0;
     GLuint m_shader = 0;
 
-    int m_maxParticles = 200000;
-    int m_spawnPerSecond = 10000;
+    int m_maxParticles = 2000000;
+    float m_spawnPerSecond = 1000.0f;
+    float m_maxDustParticles = 50.0f;
     float m_newParticles = 0.0f;
     float m_maxLifeTime = 1.5f;
-    float m_particleSize = 0.1f;
+    float m_fireSize = 0.1f;
+    float m_dustSize = 0.75f;
     std::queue<int> m_inactiveParticles;
 
-    void respawnParticle(Particle &p);
+    void spawnFireParticle(Particle &p);
 };

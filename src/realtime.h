@@ -47,7 +47,9 @@ private:
     CameraPath cameraPath;
     bool prevP;
     bool prevO;
+    bool dustOn;
     bool prevG;
+    bool prevX;
 
     // enum for each shape to make accessing stuff easier.
     enum ShapeNames { SPHERE, CONE, CUBE, CYLINDER };

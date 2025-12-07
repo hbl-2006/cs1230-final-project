@@ -36,6 +36,13 @@ Realtime::Realtime(QWidget *parent)
     m_keyMap[Qt::Key_Space]   = false;
     m_keyMap[Qt::Key_P]       = false;
     prevP                     = false;
+    m_keyMap[Qt::Key_O]       = false;
+    prevO                     = false;
+    m_keyMap[Qt::Key_G]       = false;
+    prevG                     = false;
+    m_keyMap[Qt::Key_X]       = false;
+    prevX                     = false;
+    dustOn                    = false;
 
     // If you must use this function, do not edit anything above this
 }
@@ -90,7 +97,7 @@ void Realtime::initializeGL() {
     initializeData(cylinder, CYLINDER);
     
     cameraPath = CameraPath();
-    useCameraPath(cameraPath, CameraPathTestType::PATH_CIRCULAR); // pick path here for camera path
+    useCameraPath(cameraPath, CameraPathTestType::PATH_CIRCULAR_TOWER); // pick path here for camera path
     cameraPath.buildPath();
 
     srand(time(NULL));
@@ -114,7 +121,7 @@ void Realtime::paintGL() {
     glUseProgram(0);
 
     glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glDepthMask(GL_FALSE);
     particles.render(camera.getViewMatrix(), camera.getProjectionMatrix());
     glDisable(GL_BLEND);
@@ -131,6 +138,11 @@ void Realtime::resizeGL(int w, int h) {
 void Realtime::sceneChanged() {
     // update our metadata with the new scenefile
     bool success = SceneParser::parse(settings.sceneFilePath, metadata);
+    prevP = false;
+    prevO = false;
+    prevG = false;
+    prevX = false;
+    dustOn = false;
   
     // update our list of sortedBodies
     sortedBodies.clear();
@@ -280,6 +292,24 @@ void Realtime::mouseMoveEvent(QMouseEvent *event) {
     }
 }
 
+glm::vec3 extractYawPitchRoll(glm::vec3 look, glm::vec3 up) {
+    glm::vec3 f = glm::normalize(look);
+    glm::vec3 r = glm::normalize(glm::cross(f, up));
+    glm::vec3 u = glm::normalize(glm::cross(r, f));
+
+    glm::mat3 R(
+        r.x, u.x, -f.x,
+        r.y, u.y, -f.y,
+        r.z, u.z, -f.z
+    );
+
+    float yaw = std::atan2(R[0][2], R[2][2]);
+    float pitch = std::asin(-R[1][2]);
+    float roll = std::atan2(R[1][0], R[1][1]);
+
+    return glm::vec3(yaw, pitch, roll);
+}
+
 void Realtime::timerEvent(QTimerEvent *event) {
     int elapsedms   = m_elapsedTimer.elapsed();
     float deltaTime = elapsedms * 0.001f;
@@ -303,6 +333,7 @@ void Realtime::timerEvent(QTimerEvent *event) {
     prevP = m_keyMap[Qt::Key_P];
 
     if (m_keyMap[Qt::Key_O] && !prevO) {
+        dustOn = !dustOn;
         metadata.shapes[9].body.addImpulse(glm::vec3(1, 0, 0));
         metadata.shapes[9].body.addAngularImpulse(glm::vec3(0, 0, -1));
     }
@@ -312,6 +343,19 @@ void Realtime::timerEvent(QTimerEvent *event) {
         gravity = !gravity;
     }
     prevG = m_keyMap[Qt::Key_G];
+
+    if (m_keyMap[Qt::Key_X] && !prevX) {
+        glm::vec3 cameraPos = glm::vec3(camera.getPos());
+        glm::vec3 look = glm::vec3(camera.getLook());
+        glm::vec3 up = glm::vec3(camera.getUp());
+        std::cout << "Camera Position: " << cameraPos.x << ", " << cameraPos.y << ", " << cameraPos.z << std::endl;
+
+        glm::vec3 ypr = extractYawPitchRoll(look, up);
+        std::cout << "Yaw:   " << ypr.x << " rad (" << glm::degrees(ypr.x) << " deg)" << std::endl;
+        std::cout << "Pitch: " << ypr.y << " rad (" << glm::degrees(ypr.y) << " deg)" << std::endl;
+        std::cout << "Roll:  " << ypr.z << " rad (" << glm::degrees(ypr.z) << " deg)" << std::endl;
+    }
+    prevX = m_keyMap[Qt::Key_X];
 
     if (!camera.useCameraPathEnabled()) {
         auto worldSpaceVec = glm::vec3(0);
@@ -348,7 +392,8 @@ void Realtime::timerEvent(QTimerEvent *event) {
         camera.setLookandUp(newLook, newUp);
     }
 
-    particles.updateParticles(deltaTime);
+    particles.spawnFireParticles(deltaTime);
+    particles.updateAllParticles(deltaTime);
 
     // Physics updates: before we draw! Additionally, update the ctm before drawing.
     if (metadata.shapes.size() > 0) {

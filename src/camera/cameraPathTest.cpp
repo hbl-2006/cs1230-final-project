@@ -1,8 +1,10 @@
 #include "cameraPathTest.h"
 #include "cameraPath.h"
 
-void useCameraPath(CameraPath& m_cameraPath, CameraPathTestType type) {
-    switch (type) {
+void useCameraPath(CameraPath &m_cameraPath, CameraPathTestType type)
+{
+    switch (type)
+    {
     case CameraPathTestType::YAW_CW:
         m_cameraPath.addKeyframe(glm::vec3(4.0f, 4.0f, 4.0f), glm::radians(405.0f), glm::radians(-45.0f), glm::radians(0.0f));
         m_cameraPath.addKeyframe(glm::vec3(4.0f, 4.0f, 4.0f), glm::radians(315.0f), glm::radians(-45.0f), glm::radians(0.0f));
@@ -88,5 +90,40 @@ void useCameraPath(CameraPath& m_cameraPath, CameraPathTestType type) {
         m_cameraPath.addKeyframe(glm::vec3(0.0f, 4.0f, 6.0f), glm::radians(-540.0f), glm::radians(-45.0f), glm::radians(-90.0f));
         m_cameraPath.addKeyframe(glm::vec3(0.0f, 4.0f, 6.0f), glm::radians(-360.0f), glm::radians(-15.0f), glm::radians(0.0f));
         break;
+    case CameraPathTestType::PATH_CIRCULAR_TOWER:
+        m_cameraPath.addKeyframe(glm::vec3(0.0f,                        9.0f,   18.0f),
+                                glm::radians(0.0f), glm::radians(-22.5f), glm::radians(0.0f));
+        m_cameraPath.addKeyframe(glm::vec3(9.0 * sqrt(2 - sqrt(2)),     9.0f,   9.0 * sqrt(2 + sqrt(2))),
+                                glm::radians(22.5f), glm::radians(-22.5f), glm::radians(0.0f));
+        m_cameraPath.addKeyframe(glm::vec3(9.0 * sqrt(2),               9.0f,   9.0 * sqrt(2)),
+                                glm::radians(45.0f), glm::radians(-22.5f), glm::radians(0.0f));
+        m_cameraPath.addKeyframe(glm::vec3(9.0 * sqrt(2 + sqrt(2)),     9.0f,   9.0 * sqrt(2 - sqrt(2))),
+                                glm::radians(67.5f), glm::radians(-22.5f), glm::radians(0.0f));
+        m_cameraPath.addKeyframe(glm::vec3(18.0f,                       9.0f,   0.0f),
+                                glm::radians(90.0f), glm::radians(-22.5f), glm::radians(0.0f));
+        m_cameraPath.addKeyframe(glm::vec3(9.0 * sqrt(2 + sqrt(2)),     9.0f,   -9.0 * sqrt(2 - sqrt(2))),
+                                glm::radians(112.5f), glm::radians(-22.5f), glm::radians(0.0f));
+        m_cameraPath.addKeyframe(glm::vec3(9.0 * sqrt(2),               9.0f,   -9.0 * sqrt(2)),
+                                glm::radians(135.0f), glm::radians(-22.5f), glm::radians(0.0f));
+        m_cameraPath.addKeyframe(glm::vec3(9.0 * sqrt(2 - sqrt(2)),     9.0f,   -9.0 * sqrt(2 + sqrt(2))),
+                                glm::radians(157.5f), glm::radians(-22.5f), glm::radians(0.0f));
+        m_cameraPath.addKeyframe(glm::vec3(0.0f,                        9.0f,   -18.0f),
+                                glm::radians(180.0f), glm::radians(-22.5f), glm::radians(0.0f));
+        m_cameraPath.addKeyframe(glm::vec3(-9.0 * sqrt(2 - sqrt(2)),    9.0f,   -9.0 * sqrt(2 + sqrt(2))),
+                                glm::radians(202.5f), glm::radians(-22.5f), glm::radians(0.0f));
+        m_cameraPath.addKeyframe(glm::vec3(-9.0 * sqrt(2),              9.0f,   -9.0 * sqrt(2)),
+                                glm::radians(225.0f), glm::radians(-22.5f), glm::radians(0.0f));
+        m_cameraPath.addKeyframe(glm::vec3(-9.0 * sqrt(2 + sqrt(2)),    9.0f,   -9.0 * sqrt(2 - sqrt(2))),
+                                glm::radians(247.5f), glm::radians(-22.5f), glm::radians(0.0f));
+        m_cameraPath.addKeyframe(glm::vec3(-18.0f,                      9.0f,   0.0f),
+                                glm::radians(270.0f), glm::radians(-22.5f), glm::radians(0.0f));
+        m_cameraPath.addKeyframe(glm::vec3(-9.0 * sqrt(2 + sqrt(2)),    9.0f,   9.0 * sqrt(2 - sqrt(2))),
+                                glm::radians(292.5f), glm::radians(-22.5f), glm::radians(0.0f));
+        m_cameraPath.addKeyframe(glm::vec3(-9.0 * sqrt(2),              9.0f,   9.0 * sqrt(2)),
+                                glm::radians(315.0f), glm::radians(-22.5f), glm::radians(0.0f));
+        m_cameraPath.addKeyframe(glm::vec3(-9.0 * sqrt(2 - sqrt(2)),    9.0f,   9.0 * sqrt(2 + sqrt(2))),
+                                glm::radians(337.5f), glm::radians(-22.5f), glm::radians(0.0f));
+        m_cameraPath.addKeyframe(glm::vec3(0.0f,                        9.0f,   18.0f),
+                                glm::radians(360.0f), glm::radians(-22.5f), glm::radians(0.0f));
     }
 }
