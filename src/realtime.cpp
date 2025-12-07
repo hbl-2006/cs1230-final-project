@@ -340,7 +340,7 @@ void Realtime::timerEvent(QTimerEvent *event) {
     prevO = m_keyMap[Qt::Key_O];
 
     if (m_keyMap[Qt::Key_G] && !prevG) {
-        gravity = !gravity;
+        forces = !forces;
     }
     prevG = m_keyMap[Qt::Key_G];
 

@@ -5,8 +5,10 @@ void Realtime::stepPhysics(float deltaTime)
     for (auto &shape : metadata.shapes) {
         RigidBody &body = shape.body;
         // step through physics, which will update our position and rotation matrix. remake ctm and inverse ctm!
-        if (gravity) {
+        if (forces) {
             body.addForce(glm::vec3(0, -3, 0));
+            body.addForce(-0.5f * body.velocity);
+            body.addTorque(-0.5f * body.omega);
         }
         bool stepped = body.physicsStep(deltaTime);
         if (stepped) {

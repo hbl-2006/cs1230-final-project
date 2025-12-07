@@ -98,7 +98,7 @@ private:
     ParticleSystem particles;
 
     // Physics
-    bool gravity = false;
+    bool forces = false;
     std::vector<RigidBody *> sortedBodies;
     void stepPhysics(float deltaTime);
     void resolveCollisions();
