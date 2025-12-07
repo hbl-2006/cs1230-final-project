@@ -42,8 +42,12 @@ void Realtime::resolveOneCollision(RigidBody *A, RigidBody *B)
         // Torque is distance x force, so angular impulse is distance x linear impulse by analogy
         glm::vec3 angularImpulse = glm::cross(rB, impulse);
         B->addAngularImpulse(angularImpulse);
-        if (dustOn) {
-            particles.spawnDustParticles(contactPoint, scalarImpulse);
+        if (dustOn && scalarImpulse > 0.25f) {
+            if (scalarImpulse > 1.0f) {
+                particles.spawnDustParticles(contactPoint, scalarImpulse);
+            } else {
+                particles.spawnDustParticles(contactPoint, sqrt(scalarImpulse));
+            }
         }
     } else if (B->mass_inv == 0) {
         // the mtv points away from A, so we need to flip these.
@@ -63,8 +67,12 @@ void Realtime::resolveOneCollision(RigidBody *A, RigidBody *B)
         // Torque is distance x force, so angular impulse is distance x linear impulse by analogy
         glm::vec3 angularImpulse = glm::cross(rA, impulse);
         A->addAngularImpulse(angularImpulse);
-        if (dustOn) {
-            particles.spawnDustParticles(contactPoint, scalarImpulse);
+        if (dustOn && scalarImpulse > 0.25f) {
+            if (scalarImpulse > 1.0f) {
+                particles.spawnDustParticles(contactPoint, scalarImpulse);
+            } else {
+                particles.spawnDustParticles(contactPoint, sqrt(scalarImpulse));
+            }
         }
     } else {
         A->position -= mtv / 2.0f;
