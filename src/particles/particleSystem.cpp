@@ -73,7 +73,7 @@ void ParticleSystem::initialize() {
 
 void ParticleSystem::addFireLocation(const glm::vec3 &pos, float scalarImpulse) {
     Key key = {pos.x, pos.z};
-    m_fireLocations[key] += scalarImpulse;
+    m_fireLocations[key] = scalarImpulse;
 }
 
 void ParticleSystem::spawnFireParticles(float dt) {

@@ -55,7 +55,7 @@ private:
     GLuint m_VAO = 0;
     GLuint m_shader = 0;
 
-    int m_maxParticles = 10000000;
+    int m_maxParticles = 1000000;
     float m_spawnPerSecond = 5000.0f;
     float m_maxLifeTime = 1.5f;
     float m_fireSize = 0.5f;

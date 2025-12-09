@@ -12,6 +12,184 @@
     "heightAngle": 49.5,
     "look": [0, -3.116, -16.013]
   },
+
+  "templateGroups": [
+    {
+      "name": "CubeTemplate",
+      "scale": [0.5, 0.5, 0.5],
+      "primitives": [
+        {
+          "type": "cube",
+          "diffuse": [0.7, 0.7, 0.7],
+          "specular": [1, 1, 1],
+          "reflective": [0.5, 0.5, 0.5],
+          "shininess": 10,
+          "blend": 0.5,
+          "textureFile": "",
+          "textureU": 1,
+          "textureV": 1
+        }
+      ]
+    },
+    {
+      "name": "TowerLevel19",
+      "translate": [0, 0.501, 0],
+      "groups": [ { "name": "CubeTemplate" } ]
+    },
+    {
+      "name": "TowerLevel18",
+      "translate": [0, 0.501, 0],
+      "groups": [
+        { "name": "CubeTemplate" },
+        { "name": "TowerLevel19" }
+      ]
+    },
+    {
+      "name": "TowerLevel17",
+      "translate": [0, 0.501, 0],
+      "groups": [
+        { "name": "CubeTemplate" },
+        { "name": "TowerLevel18" }
+      ]
+    },
+    {
+      "name": "TowerLevel16",
+      "translate": [0, 0.501, 0],
+      "groups": [
+        { "name": "CubeTemplate" },
+        { "name": "TowerLevel17" }
+      ]
+    },
+    {
+      "name": "TowerLevel15",
+      "translate": [0, 0.501, 0],
+      "groups": [
+        { "name": "CubeTemplate" },
+        { "name": "TowerLevel16" }
+      ]
+    },
+    {
+      "name": "TowerLevel14",
+      "translate": [0, 0.501, 0],
+      "groups": [
+        { "name": "CubeTemplate" },
+        { "name": "TowerLevel15" }
+      ]
+    },
+    {
+      "name": "TowerLevel13",
+      "translate": [0, 0.501, 0],
+      "groups": [
+        { "name": "CubeTemplate" },
+        { "name": "TowerLevel14" }
+      ]
+    },
+    {
+      "name": "TowerLevel12",
+      "translate": [0, 0.501, 0],
+      "groups": [
+        { "name": "CubeTemplate" },
+        { "name": "TowerLevel13" }
+      ]
+    },
+    {
+      "name": "TowerLevel11",
+      "translate": [0, 0.501, 0],
+      "groups": [
+        { "name": "CubeTemplate" },
+        { "name": "TowerLevel12" }
+      ]
+    },
+    {
+      "name": "TowerLevel10",
+      "translate": [0, 0.501, 0],
+      "groups": [
+        { "name": "CubeTemplate" },
+        { "name": "TowerLevel11" }
+      ]
+    },
+    {
+      "name": "TowerLevel9",
+      "translate": [0, 0.501, 0],
+      "groups": [
+        { "name": "CubeTemplate" },
+        { "name": "TowerLevel10" }
+      ]
+    },
+    {
+      "name": "TowerLevel8",
+      "translate": [0, 0.501, 0],
+      "groups": [
+        { "name": "CubeTemplate" },
+        { "name": "TowerLevel9" }
+      ]
+    },
+    {
+      "name": "TowerLevel7",
+      "translate": [0, 0.501, 0],
+      "groups": [
+        { "name": "CubeTemplate" },
+        { "name": "TowerLevel8" }
+      ]
+    },
+    {
+      "name": "TowerLevel6",
+      "translate": [0, 0.501, 0],
+      "groups": [
+        { "name": "CubeTemplate" },
+        { "name": "TowerLevel7" }
+      ]
+    },
+    {
+      "name": "TowerLevel5",
+      "translate": [0, 0.501, 0],
+      "groups": [
+        { "name": "CubeTemplate" },
+        { "name": "TowerLevel6" }
+      ]
+    },
+    {
+      "name": "TowerLevel4",
+      "translate": [0, 0.501, 0],
+      "groups": [
+        { "name": "CubeTemplate" },
+        { "name": "TowerLevel5" }
+      ]
+    },
+    {
+      "name": "TowerLevel3",
+      "translate": [0, 0.501, 0],
+      "groups": [
+        { "name": "CubeTemplate" },
+        { "name": "TowerLevel4" }
+      ]
+    },
+    {
+      "name": "TowerLevel2",
+      "translate": [0, 0.501, 0],
+      "groups": [
+        { "name": "CubeTemplate" },
+        { "name": "TowerLevel3" }
+      ]
+    },
+    {
+      "name": "TowerLevel1",
+      "translate": [0, 0.501, 0],
+      "groups": [
+        { "name": "CubeTemplate" },
+        { "name": "TowerLevel2" }
+      ]
+    },
+    {
+      "name": "TowerLevel0",
+      "translate": [0, 0, 0],
+      "groups": [
+        { "name": "CubeTemplate" },
+        { "name": "TowerLevel1" }
+      ]
+    }
+  ],
+
   "groups": [
     {
       "name": "Directional Lights",
@@ -40,364 +218,179 @@
       "translate": [10, 10, 10]
     },
     {
-      "name": "Cube_0",
-      "primitives": [
-        {
-          "diffuse": [0.7, 0.7, 0.7],
-          "specular": [1, 1, 1],
-          "reflective": [0.5, 0.5, 0.5],
-          "shininess": 10,
-          "blend": 0.5,
-          "textureFile": "",
-          "textureU": 1,
-          "textureV": 1,
-          "type": "cube"
-        }
+      "name": "Tower1",
+      "groups": [
+        { "name": "TowerLevel0" }
       ],
-      "translate": [0, 0, 0],
-      "scale": [0.5, 0.5, 0.5]
+      "translate": [-1.002, 0, -1.002]
     },
     {
-      "name": "Cube_1",
-      "primitives": [
-        {
-          "diffuse": [0.7, 0.7, 0.7],
-          "specular": [1, 1, 1],
-          "reflective": [0.5, 0.5, 0.5],
-          "shininess": 10,
-          "blend": 0.5,
-          "textureFile": "",
-          "textureU": 1,
-          "textureV": 1,
-          "type": "cube"
-        }
+      "name": "Tower2",
+      "groups": [
+        { "name": "TowerLevel0" }
       ],
-      "translate": [0, 0.501, 0],
-      "scale": [0.5, 0.5, 0.5]
+      "translate": [-0.501, 0, -1.002]
     },
     {
-      "name": "Cube_2",
-      "primitives": [
-        {
-          "diffuse": [0.7, 0.7, 0.7],
-          "specular": [1, 1, 1],
-          "reflective": [0.5, 0.5, 0.5],
-          "shininess": 10,
-          "blend": 0.5,
-          "textureFile": "",
-          "textureU": 1,
-          "textureV": 1,
-          "type": "cube"
-        }
+      "name": "Tower3",
+      "groups": [
+        { "name": "TowerLevel0" }
       ],
-      "translate": [0, 1.002, 0],
-      "scale": [0.5, 0.5, 0.5]
+      "translate": [0, 0, -1.002]
     },
     {
-      "name": "Cube_3",
-      "primitives": [
-        {
-          "diffuse": [0.7, 0.7, 0.7],
-          "specular": [1, 1, 1],
-          "reflective": [0.5, 0.5, 0.5],
-          "shininess": 10,
-          "blend": 0.5,
-          "textureFile": "",
-          "textureU": 1,
-          "textureV": 1,
-          "type": "cube"
-        }
+      "name": "Tower4",
+      "groups": [
+        { "name": "TowerLevel0" }
       ],
-      "translate": [0, 1.503, 0],
-      "scale": [0.5, 0.5, 0.5]
+      "translate": [0.501, 0, -1.002]
     },
     {
-      "name": "Cube_4",
-      "primitives": [
-        {
-          "diffuse": [0.7, 0.7, 0.7],
-          "specular": [1, 1, 1],
-          "reflective": [0.5, 0.5, 0.5],
-          "shininess": 10,
-          "blend": 0.5,
-          "textureFile": "",
-          "textureU": 1,
-          "textureV": 1,
-          "type": "cube"
-        }
+      "name": "Tower5",
+      "groups": [
+        { "name": "TowerLevel0" }
       ],
-      "translate": [0, 2.004, 0],
-      "scale": [0.5, 0.5, 0.5]
+      "translate": [1.002, 0, -1.002]
     },
     {
-      "name": "Cube_5",
-      "primitives": [
-        {
-          "diffuse": [0.7, 0.7, 0.7],
-          "specular": [1, 1, 1],
-          "reflective": [0.5, 0.5, 0.5],
-          "shininess": 10,
-          "blend": 0.5,
-          "textureFile": "",
-          "textureU": 1,
-          "textureV": 1,
-          "type": "cube"
-        }
+      "name": "Tower6",
+      "groups": [
+        { "name": "TowerLevel0" }
       ],
-      "translate": [0, 2.505, 0],
-      "scale": [0.5, 0.5, 0.5]
+      "translate": [-1.002, 0, -0.501]
     },
     {
-      "name": "Cube_6",
-      "primitives": [
-        {
-          "diffuse": [0.7, 0.7, 0.7],
-          "specular": [1, 1, 1],
-          "reflective": [0.5, 0.5, 0.5],
-          "shininess": 10,
-          "blend": 0.5,
-          "textureFile": "",
-          "textureU": 1,
-          "textureV": 1,
-          "type": "cube"
-        }
+      "name": "Tower7",
+      "groups": [
+        { "name": "TowerLevel0" }
       ],
-      "translate": [0, 3.006, 0],
-      "scale": [0.5, 0.5, 0.5]
+      "translate": [-0.501, 0, -0.501]
     },
     {
-      "name": "Cube_7",
-      "primitives": [
-        {
-          "diffuse": [0.7, 0.7, 0.7],
-          "specular": [1, 1, 1],
-          "reflective": [0.5, 0.5, 0.5],
-          "shininess": 10,
-          "blend": 0.5,
-          "textureFile": "",
-          "textureU": 1,
-          "textureV": 1,
-          "type": "cube"
-        }
+      "name": "Tower8",
+      "groups": [
+        { "name": "TowerLevel0" }
       ],
-      "translate": [0, 3.507, 0],
-      "scale": [0.5, 0.5, 0.5]
+      "translate": [0, 0, -0.501]
     },
     {
-      "name": "Cube_8",
-      "primitives": [
-        {
-          "diffuse": [0.7, 0.7, 0.7],
-          "specular": [1, 1, 1],
-          "reflective": [0.5, 0.5, 0.5],
-          "shininess": 10,
-          "blend": 0.5,
-          "textureFile": "",
-          "textureU": 1,
-          "textureV": 1,
-          "type": "cube"
-        }
+      "name": "Tower9",
+      "groups": [
+        { "name": "TowerLevel0" }
       ],
-      "translate": [0, 4.008, 0],
-      "scale": [0.5, 0.5, 0.5]
+      "translate": [0.501, 0, -0.501]
     },
     {
-      "name": "Cube_9",
-      "primitives": [
-        {
-          "diffuse": [0.7, 0.7, 0.7],
-          "specular": [1, 1, 1],
-          "reflective": [0.5, 0.5, 0.5],
-          "shininess": 10,
-          "blend": 0.5,
-          "textureFile": "",
-          "textureU": 1,
-          "textureV": 1,
-          "type": "cube"
-        }
+      "name": "Tower10",
+      "groups": [
+        { "name": "TowerLevel0" }
       ],
-      "translate": [0, 4.509, 0],
-      "scale": [0.5, 0.5, 0.5]
+      "translate": [1.002, 0, -0.501]
     },
     {
-      "name": "Cube_10",
-      "primitives": [
-        {
-          "diffuse": [0.7, 0.7, 0.7],
-          "specular": [1, 1, 1],
-          "reflective": [0.5, 0.5, 0.5],
-          "shininess": 10,
-          "blend": 0.5,
-          "textureFile": "",
-          "textureU": 1,
-          "textureV": 1,
-          "type": "cube"
-        }
+      "name": "Tower11",
+      "groups": [
+        { "name": "TowerLevel0" }
       ],
-      "translate": [0, 5.01, 0],
-      "scale": [0.5, 0.5, 0.5]
+      "translate": [-1.002, 0, 0]
     },
     {
-      "name": "Cube_11",
-      "primitives": [
-        {
-          "diffuse": [0.7, 0.7, 0.7],
-          "specular": [1, 1, 1],
-          "reflective": [0.5, 0.5, 0.5],
-          "shininess": 10,
-          "blend": 0.5,
-          "textureFile": "",
-          "textureU": 1,
-          "textureV": 1,
-          "type": "cube"
-        }
+      "name": "Tower12",
+      "groups": [
+        { "name": "TowerLevel0" }
       ],
-      "translate": [0, 5.511, 0],
-      "scale": [0.5, 0.5, 0.5]
+      "translate": [-0.501, 0, 0]
     },
     {
-      "name": "Cube_12",
-      "primitives": [
-        {
-          "diffuse": [0.7, 0.7, 0.7],
-          "specular": [1, 1, 1],
-          "reflective": [0.5, 0.5, 0.5],
-          "shininess": 10,
-          "blend": 0.5,
-          "textureFile": "",
-          "textureU": 1,
-          "textureV": 1,
-          "type": "cube"
-        }
+      "name": "Tower13",
+      "groups": [
+        { "name": "TowerLevel0" }
       ],
-      "translate": [0, 6.012, 0],
-      "scale": [0.5, 0.5, 0.5]
+      "translate": [0, 0, 0]
     },
     {
-      "name": "Cube_13",
-      "primitives": [
-        {
-          "diffuse": [0.7, 0.7, 0.7],
-          "specular": [1, 1, 1],
-          "reflective": [0.5, 0.5, 0.5],
-          "shininess": 10,
-          "blend": 0.5,
-          "textureFile": "",
-          "textureU": 1,
-          "textureV": 1,
-          "type": "cube"
-        }
+      "name": "Tower14",
+      "groups": [
+        { "name": "TowerLevel0" }
       ],
-      "translate": [0, 6.513, 0],
-      "scale": [0.5, 0.5, 0.5]
+      "translate": [0.501, 0, 0]
     },
     {
-      "name": "Cube_14",
-      "primitives": [
-        {
-          "diffuse": [0.7, 0.7, 0.7],
-          "specular": [1, 1, 1],
-          "reflective": [0.5, 0.5, 0.5],
-          "shininess": 10,
-          "blend": 0.5,
-          "textureFile": "",
-          "textureU": 1,
-          "textureV": 1,
-          "type": "cube"
-        }
+      "name": "Tower15",
+      "groups": [
+        { "name": "TowerLevel0" }
       ],
-      "translate": [0, 7.014, 0],
-      "scale": [0.5, 0.5, 0.5]
+      "translate": [1.002, 0, 0]
     },
     {
-      "name": "Cube_15",
-      "primitives": [
-        {
-          "diffuse": [0.7, 0.7, 0.7],
-          "specular": [1, 1, 1],
-          "reflective": [0.5, 0.5, 0.5],
-          "shininess": 10,
-          "blend": 0.5,
-          "textureFile": "",
-          "textureU": 1,
-          "textureV": 1,
-          "type": "cube"
-        }
+      "name": "Tower16",
+      "groups": [
+        { "name": "TowerLevel0" }
       ],
-      "translate": [0, 7.515, 0],
-      "scale": [0.5, 0.5, 0.5]
+      "translate": [-1.002, 0, 0.501]
     },
     {
-      "name": "Cube_16",
-      "primitives": [
-        {
-          "diffuse": [0.7, 0.7, 0.7],
-          "specular": [1, 1, 1],
-          "reflective": [0.5, 0.5, 0.5],
-          "shininess": 10,
-          "blend": 0.5,
-          "textureFile": "",
-          "textureU": 1,
-          "textureV": 1,
-          "type": "cube"
-        }
+      "name": "Tower17",
+      "groups": [
+        { "name": "TowerLevel0" }
       ],
-      "translate": [0, 8.016, 0],
-      "scale": [0.5, 0.5, 0.5]
+      "translate": [-0.501, 0, 0.501]
     },
     {
-      "name": "Cube_17",
-      "primitives": [
-        {
-          "diffuse": [0.7, 0.7, 0.7],
-          "specular": [1, 1, 1],
-          "reflective": [0.5, 0.5, 0.5],
-          "shininess": 10,
-          "blend": 0.5,
-          "textureFile": "",
-          "textureU": 1,
-          "textureV": 1,
-          "type": "cube"
-        }
+      "name": "Tower18",
+      "groups": [
+        { "name": "TowerLevel0" }
       ],
-      "translate": [0, 8.517, 0],
-      "scale": [0.5, 0.5, 0.5]
+      "translate": [0, 0, 0.501]
     },
     {
-      "name": "Cube_18",
-      "primitives": [
-        {
-          "diffuse": [0.7, 0.7, 0.7],
-          "specular": [1, 1, 1],
-          "reflective": [0.5, 0.5, 0.5],
-          "shininess": 10,
-          "blend": 0.5,
-          "textureFile": "",
-          "textureU": 1,
-          "textureV": 1,
-          "type": "cube"
-        }
+      "name": "Tower19",
+      "groups": [
+        { "name": "TowerLevel0" }
       ],
-      "translate": [0, 9.018, 0],
-      "scale": [0.5, 0.5, 0.5]
+      "translate": [0.501, 0, 0.501]
     },
     {
-      "name": "Cube_19",
-      "primitives": [
-        {
-          "diffuse": [0.7, 0.7, 0.7],
-          "specular": [1, 1, 1],
-          "reflective": [0.5, 0.5, 0.5],
-          "shininess": 10,
-          "blend": 0.5,
-          "textureFile": "",
-          "textureU": 1,
-          "textureV": 1,
-          "type": "cube"
-        }
+      "name": "Tower20",
+      "groups": [
+        { "name": "TowerLevel0" }
       ],
-      "translate": [0, 9.519, 0],
-      "scale": [0.5, 0.5, 0.5]
+      "translate": [1.002, 0, 0.501]
+    },
+    {
+      "name": "Tower21",
+      "groups": [
+        { "name": "TowerLevel0" }
+      ],
+      "translate": [-1.002, 0, 1.002]
+    },
+    {
+      "name": "Tower22",
+      "groups": [
+        { "name": "TowerLevel0" }
+      ],
+      "translate": [-0.501, 0, 1.002]
+    },
+    {
+      "name": "Tower23",
+      "groups": [
+        { "name": "TowerLevel0" }
+      ],
+      "translate": [0, 0, 1.002]
+    },
+    {
+      "name": "Tower24",
+      "groups": [
+        { "name": "TowerLevel0" }
+      ],
+      "translate": [0.501, 0, 1.002]
+    },
+    {
+      "name": "Tower25",
+      "groups": [
+        { "name": "TowerLevel0" }
+      ],
+      "translate": [1.002, 0, 1.002]
     },
     {
       "name": "Floor",
@@ -418,6 +411,5 @@
       "translate": [0, -0.5, 0],
       "scale": [100, 0.1, 100]
     }
-  ],
-  "templateGroups": []
+  ]
 }

@@ -335,8 +335,10 @@ void Realtime::timerEvent(QTimerEvent *event) {
 
     if (m_keyMap[Qt::Key_O] && !prevO) {
         dustOn = !dustOn;
-        metadata.shapes[9].body.addImpulse(glm::vec3(1, 0, 0));
-        metadata.shapes[9].body.addAngularImpulse(glm::vec3(0, 0, -1));
+        metadata.shapes[249].body.addImpulse(glm::vec3(1, 0, 1));
+        metadata.shapes[249].body.addAngularImpulse(glm::vec3(0, 0, -1));
+        metadata.shapes[250].body.addImpulse(glm::vec3(-1, 0, -1));
+        metadata.shapes[250].body.addAngularImpulse(glm::vec3(0, 0, 1));
     }
     prevO = m_keyMap[Qt::Key_O];
 
