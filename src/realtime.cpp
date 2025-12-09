@@ -385,7 +385,7 @@ void Realtime::timerEvent(QTimerEvent *event) {
         }
         camera.translate(worldSpaceVec, deltaTime * 5);
     } else {
-        camera.updatePathTime(deltaTime);
+        camera.updatePathTime(deltaTime * 0.5f);
         glm::vec3 newPos = cameraPath.evaluatePoint(camera.getPathTime());
         glm::quat rotation = cameraPath.getOrientation(camera.getPathTime());
         glm::vec4 newLook = glm::normalize(rotation * glm::vec4(0, 0, -1, 0));

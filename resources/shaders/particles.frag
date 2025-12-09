@@ -25,6 +25,7 @@ void main() {
         } else {
             float t = lifeFraction / 0.5;
             color = mix(vec3(0.0, 0.0, 0.0), vec3(0.5, 0.0, 0.0), t);
+            alpha *= mix(0.0, 1.0, t * t * t * t * t);
         }
     } else {
         alpha *= max(0.0, 1.0 - dist / 0.5) * max(0.0, 1.0 - dist / 0.5);
