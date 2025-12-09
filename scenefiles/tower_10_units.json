@@ -1,0 +1,423 @@
+{
+  "name": "root",
+  "globalData": {
+    "ambientCoeff": 0.5,
+    "diffuseCoeff": 0.7,
+    "specularCoeff": 0.54,
+    "transparentCoeff": 0
+  },
+  "cameraData": {
+    "position": [0, 5, 15],
+    "up": [0, 1, 0],
+    "heightAngle": 49.5,
+    "look": [0, -3.116, -16.013]
+  },
+  "groups": [
+    {
+      "name": "Directional Lights",
+      "lights": [
+        {
+          "color": [1, 1, 1],
+          "type": "directional",
+          "direction": [0.25, 1, -1]
+        },
+        {
+          "color": [1, 1, 1],
+          "type": "directional",
+          "direction": [1, -1.8, -2]
+        }
+      ]
+    },
+    {
+      "name": "Point Light",
+      "lights": [
+        {
+          "color": [1, 1, 1],
+          "type": "point",
+          "attenuationCoeff": [1.5, 0, 0]
+        }
+      ],
+      "translate": [10, 10, 10]
+    },
+    {
+      "name": "Cube_0",
+      "primitives": [
+        {
+          "diffuse": [0.7, 0.7, 0.7],
+          "specular": [1, 1, 1],
+          "reflective": [0.5, 0.5, 0.5],
+          "shininess": 10,
+          "blend": 0.5,
+          "textureFile": "",
+          "textureU": 1,
+          "textureV": 1,
+          "type": "cube"
+        }
+      ],
+      "translate": [0, 0, 0],
+      "scale": [0.5, 0.5, 0.5]
+    },
+    {
+      "name": "Cube_1",
+      "primitives": [
+        {
+          "diffuse": [0.7, 0.7, 0.7],
+          "specular": [1, 1, 1],
+          "reflective": [0.5, 0.5, 0.5],
+          "shininess": 10,
+          "blend": 0.5,
+          "textureFile": "",
+          "textureU": 1,
+          "textureV": 1,
+          "type": "cube"
+        }
+      ],
+      "translate": [0, 0.501, 0],
+      "scale": [0.5, 0.5, 0.5]
+    },
+    {
+      "name": "Cube_2",
+      "primitives": [
+        {
+          "diffuse": [0.7, 0.7, 0.7],
+          "specular": [1, 1, 1],
+          "reflective": [0.5, 0.5, 0.5],
+          "shininess": 10,
+          "blend": 0.5,
+          "textureFile": "",
+          "textureU": 1,
+          "textureV": 1,
+          "type": "cube"
+        }
+      ],
+      "translate": [0, 1.002, 0],
+      "scale": [0.5, 0.5, 0.5]
+    },
+    {
+      "name": "Cube_3",
+      "primitives": [
+        {
+          "diffuse": [0.7, 0.7, 0.7],
+          "specular": [1, 1, 1],
+          "reflective": [0.5, 0.5, 0.5],
+          "shininess": 10,
+          "blend": 0.5,
+          "textureFile": "",
+          "textureU": 1,
+          "textureV": 1,
+          "type": "cube"
+        }
+      ],
+      "translate": [0, 1.503, 0],
+      "scale": [0.5, 0.5, 0.5]
+    },
+    {
+      "name": "Cube_4",
+      "primitives": [
+        {
+          "diffuse": [0.7, 0.7, 0.7],
+          "specular": [1, 1, 1],
+          "reflective": [0.5, 0.5, 0.5],
+          "shininess": 10,
+          "blend": 0.5,
+          "textureFile": "",
+          "textureU": 1,
+          "textureV": 1,
+          "type": "cube"
+        }
+      ],
+      "translate": [0, 2.004, 0],
+      "scale": [0.5, 0.5, 0.5]
+    },
+    {
+      "name": "Cube_5",
+      "primitives": [
+        {
+          "diffuse": [0.7, 0.7, 0.7],
+          "specular": [1, 1, 1],
+          "reflective": [0.5, 0.5, 0.5],
+          "shininess": 10,
+          "blend": 0.5,
+          "textureFile": "",
+          "textureU": 1,
+          "textureV": 1,
+          "type": "cube"
+        }
+      ],
+      "translate": [0, 2.505, 0],
+      "scale": [0.5, 0.5, 0.5]
+    },
+    {
+      "name": "Cube_6",
+      "primitives": [
+        {
+          "diffuse": [0.7, 0.7, 0.7],
+          "specular": [1, 1, 1],
+          "reflective": [0.5, 0.5, 0.5],
+          "shininess": 10,
+          "blend": 0.5,
+          "textureFile": "",
+          "textureU": 1,
+          "textureV": 1,
+          "type": "cube"
+        }
+      ],
+      "translate": [0, 3.006, 0],
+      "scale": [0.5, 0.5, 0.5]
+    },
+    {
+      "name": "Cube_7",
+      "primitives": [
+        {
+          "diffuse": [0.7, 0.7, 0.7],
+          "specular": [1, 1, 1],
+          "reflective": [0.5, 0.5, 0.5],
+          "shininess": 10,
+          "blend": 0.5,
+          "textureFile": "",
+          "textureU": 1,
+          "textureV": 1,
+          "type": "cube"
+        }
+      ],
+      "translate": [0, 3.507, 0],
+      "scale": [0.5, 0.5, 0.5]
+    },
+    {
+      "name": "Cube_8",
+      "primitives": [
+        {
+          "diffuse": [0.7, 0.7, 0.7],
+          "specular": [1, 1, 1],
+          "reflective": [0.5, 0.5, 0.5],
+          "shininess": 10,
+          "blend": 0.5,
+          "textureFile": "",
+          "textureU": 1,
+          "textureV": 1,
+          "type": "cube"
+        }
+      ],
+      "translate": [0, 4.008, 0],
+      "scale": [0.5, 0.5, 0.5]
+    },
+    {
+      "name": "Cube_9",
+      "primitives": [
+        {
+          "diffuse": [0.7, 0.7, 0.7],
+          "specular": [1, 1, 1],
+          "reflective": [0.5, 0.5, 0.5],
+          "shininess": 10,
+          "blend": 0.5,
+          "textureFile": "",
+          "textureU": 1,
+          "textureV": 1,
+          "type": "cube"
+        }
+      ],
+      "translate": [0, 4.509, 0],
+      "scale": [0.5, 0.5, 0.5]
+    },
+    {
+      "name": "Cube_10",
+      "primitives": [
+        {
+          "diffuse": [0.7, 0.7, 0.7],
+          "specular": [1, 1, 1],
+          "reflective": [0.5, 0.5, 0.5],
+          "shininess": 10,
+          "blend": 0.5,
+          "textureFile": "",
+          "textureU": 1,
+          "textureV": 1,
+          "type": "cube"
+        }
+      ],
+      "translate": [0, 5.01, 0],
+      "scale": [0.5, 0.5, 0.5]
+    },
+    {
+      "name": "Cube_11",
+      "primitives": [
+        {
+          "diffuse": [0.7, 0.7, 0.7],
+          "specular": [1, 1, 1],
+          "reflective": [0.5, 0.5, 0.5],
+          "shininess": 10,
+          "blend": 0.5,
+          "textureFile": "",
+          "textureU": 1,
+          "textureV": 1,
+          "type": "cube"
+        }
+      ],
+      "translate": [0, 5.511, 0],
+      "scale": [0.5, 0.5, 0.5]
+    },
+    {
+      "name": "Cube_12",
+      "primitives": [
+        {
+          "diffuse": [0.7, 0.7, 0.7],
+          "specular": [1, 1, 1],
+          "reflective": [0.5, 0.5, 0.5],
+          "shininess": 10,
+          "blend": 0.5,
+          "textureFile": "",
+          "textureU": 1,
+          "textureV": 1,
+          "type": "cube"
+        }
+      ],
+      "translate": [0, 6.012, 0],
+      "scale": [0.5, 0.5, 0.5]
+    },
+    {
+      "name": "Cube_13",
+      "primitives": [
+        {
+          "diffuse": [0.7, 0.7, 0.7],
+          "specular": [1, 1, 1],
+          "reflective": [0.5, 0.5, 0.5],
+          "shininess": 10,
+          "blend": 0.5,
+          "textureFile": "",
+          "textureU": 1,
+          "textureV": 1,
+          "type": "cube"
+        }
+      ],
+      "translate": [0, 6.513, 0],
+      "scale": [0.5, 0.5, 0.5]
+    },
+    {
+      "name": "Cube_14",
+      "primitives": [
+        {
+          "diffuse": [0.7, 0.7, 0.7],
+          "specular": [1, 1, 1],
+          "reflective": [0.5, 0.5, 0.5],
+          "shininess": 10,
+          "blend": 0.5,
+          "textureFile": "",
+          "textureU": 1,
+          "textureV": 1,
+          "type": "cube"
+        }
+      ],
+      "translate": [0, 7.014, 0],
+      "scale": [0.5, 0.5, 0.5]
+    },
+    {
+      "name": "Cube_15",
+      "primitives": [
+        {
+          "diffuse": [0.7, 0.7, 0.7],
+          "specular": [1, 1, 1],
+          "reflective": [0.5, 0.5, 0.5],
+          "shininess": 10,
+          "blend": 0.5,
+          "textureFile": "",
+          "textureU": 1,
+          "textureV": 1,
+          "type": "cube"
+        }
+      ],
+      "translate": [0, 7.515, 0],
+      "scale": [0.5, 0.5, 0.5]
+    },
+    {
+      "name": "Cube_16",
+      "primitives": [
+        {
+          "diffuse": [0.7, 0.7, 0.7],
+          "specular": [1, 1, 1],
+          "reflective": [0.5, 0.5, 0.5],
+          "shininess": 10,
+          "blend": 0.5,
+          "textureFile": "",
+          "textureU": 1,
+          "textureV": 1,
+          "type": "cube"
+        }
+      ],
+      "translate": [0, 8.016, 0],
+      "scale": [0.5, 0.5, 0.5]
+    },
+    {
+      "name": "Cube_17",
+      "primitives": [
+        {
+          "diffuse": [0.7, 0.7, 0.7],
+          "specular": [1, 1, 1],
+          "reflective": [0.5, 0.5, 0.5],
+          "shininess": 10,
+          "blend": 0.5,
+          "textureFile": "",
+          "textureU": 1,
+          "textureV": 1,
+          "type": "cube"
+        }
+      ],
+      "translate": [0, 8.517, 0],
+      "scale": [0.5, 0.5, 0.5]
+    },
+    {
+      "name": "Cube_18",
+      "primitives": [
+        {
+          "diffuse": [0.7, 0.7, 0.7],
+          "specular": [1, 1, 1],
+          "reflective": [0.5, 0.5, 0.5],
+          "shininess": 10,
+          "blend": 0.5,
+          "textureFile": "",
+          "textureU": 1,
+          "textureV": 1,
+          "type": "cube"
+        }
+      ],
+      "translate": [0, 9.018, 0],
+      "scale": [0.5, 0.5, 0.5]
+    },
+    {
+      "name": "Cube_19",
+      "primitives": [
+        {
+          "diffuse": [0.7, 0.7, 0.7],
+          "specular": [1, 1, 1],
+          "reflective": [0.5, 0.5, 0.5],
+          "shininess": 10,
+          "blend": 0.5,
+          "textureFile": "",
+          "textureU": 1,
+          "textureV": 1,
+          "type": "cube"
+        }
+      ],
+      "translate": [0, 9.519, 0],
+      "scale": [0.5, 0.5, 0.5]
+    },
+    {
+      "name": "Floor",
+      "primitives": [
+        {
+          "diffuse": [0.3, 0.7, 0.3],
+          "specular": [1, 1, 1],
+          "reflective": [0.5, 0.5, 0.5],
+          "shininess": 10,
+          "blend": 0.5,
+          "textureFile": "",
+          "textureU": 1,
+          "textureV": 1,
+          "type": "cube",
+          "dynamic": false
+        }
+      ],
+      "translate": [0, -0.5, 0],
+      "scale": [100, 0.1, 100]
+    }
+  ],
+  "templateGroups": []
+}
