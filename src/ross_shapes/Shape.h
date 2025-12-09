@@ -1,7 +1,6 @@
 #pragma once
 #include "glm/ext/vector_float3.hpp"
 #include <vector>
-
 class Shape
 {
 public:
@@ -13,8 +12,7 @@ public:
         setVertexData();
     };
     std::vector<float> generateShape() { return m_vertexData; }
-    int getVertexCount() { return m_vertexData.size() / 14; };
-    // Updated: 3 pos + 3 norm + 2 uv + 3 tangent + 3 bitangent = 14
+    int getVertexCount() { return m_vertexData.size() / 6; };
 
 protected:
     void insertVec3(std::vector<float> &data, glm::vec3 v)

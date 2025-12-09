@@ -25,18 +25,18 @@ class Realtime : public QOpenGLWidget
 {
 public:
     Realtime(QWidget *parent = nullptr);
-    void finish();                                      // Called on program exit
+    void finish(); // Called on program exit
     void sceneChanged();
     void settingsChanged();
     void saveViewportImage(std::string filePath);
 
 public slots:
-    void tick(QTimerEvent* event);                      // Called once per tick of m_timer
+    void tick(QTimerEvent *event); // Called once per tick of m_timer
 
 protected:
-    void initializeGL() override;                       // Called once at the start of the program
-    void paintGL() override;                            // Called whenever the OpenGL context changes or by an update() request
-    void resizeGL(int width, int height) override;      // Called when window size changes
+    void initializeGL() override; // Called once at the start of the program
+    void paintGL() override; // Called whenever the OpenGL context changes or by an update() request
+    void resizeGL(int width, int height) override; // Called when window size changes
 
 private:
     bool initialized = false;
@@ -57,8 +57,31 @@ private:
     Cone cone;
     Cube cube;
     Cylinder cylinder;
-    void initializeData(Shape &s, ShapeNames name);
-    void drawShape(RenderShapeData &shape);
+    void initializeData(ShapeNames name);
+    void drawShape(RenderShapeData &shape,
+                   GLint useTextureLoc,
+                   GLint textureSamplerLoc,
+                   GLint blendLoc,
+                   GLint repeatULoc,
+                   GLint repeatVLoc,
+                   GLint useNormalMapLoc,
+                   GLint normalSamplerLoc,
+                   GLint useBumpMapLoc,
+                   GLint bumpSamplerLoc,
+                   GLint bumpStrengthLoc,
+                   GLint useParallaxMapLoc,
+                   GLint parallaxSamplerLoc,
+                   GLint parallaxHeightLoc);
+
+    // Texture loading and caching
+    std::unordered_map<std::string, GLuint> m_textureCache;
+    GLuint loadTexture(const std::string &filepath);
+
+    // Cached vertex counts for efficient rendering
+    int sphereVertexCount = 0;
+    int coneVertexCount = 0;
+    int cubeVertexCount = 0;
+    int cylinderVertexCount = 0;
 
     // Copies of pertinent settings to check if changed
     int param1;
@@ -74,13 +97,13 @@ private:
     void timerEvent(QTimerEvent *event) override;
 
     // Tick Related Variables
-    int m_timer;                                        // Stores timer which attempts to run ~60 times per second
-    QElapsedTimer m_elapsedTimer;                       // Stores timer which keeps track of actual time between frames
+    int m_timer;                  // Stores timer which attempts to run ~60 times per second
+    QElapsedTimer m_elapsedTimer; // Stores timer which keeps track of actual time between frames
 
     // Input Related Variables
-    bool m_mouseDown = false;                           // Stores state of left mouse button
-    glm::vec2 m_prev_mouse_pos;                         // Stores mouse position
-    std::unordered_map<Qt::Key, bool> m_keyMap;         // Stores whether keys are pressed or not
+    bool m_mouseDown = false;                   // Stores state of left mouse button
+    glm::vec2 m_prev_mouse_pos;                 // Stores mouse position
+    std::unordered_map<Qt::Key, bool> m_keyMap; // Stores whether keys are pressed or not
 
     // Device Correction Variables
     double m_devicePixelRatio;

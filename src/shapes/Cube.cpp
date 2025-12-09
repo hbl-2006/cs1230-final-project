@@ -3,154 +3,156 @@
 void Cube::makeTile(glm::vec3 topLeft,
                     glm::vec3 topRight,
                     glm::vec3 bottomLeft,
-                    glm::vec3 bottomRight) {
-    // Task 2: create a tile (i.e. 2 triangles) based on 4 given points.
-    auto v1 = topLeft;
-    auto v2 = bottomLeft;
-    auto v3 = bottomRight;
-    insertVec3(m_vertexData, v1);
-    insertVec3(m_vertexData, glm::normalize(glm::cross(v2 - v1, v3 - v1)));
-    insertVec3(m_vertexData, v2);
-    insertVec3(m_vertexData, glm::normalize(glm::cross(v3 - v2, v1 - v2)));
-    insertVec3(m_vertexData, v3);
-    insertVec3(m_vertexData, glm::normalize(glm::cross(v1 - v3, v2 - v3)));
-    v1 = bottomRight;
-    v2 = topRight;
-    v3 = topLeft;
-    insertVec3(m_vertexData, v1);
-    insertVec3(m_vertexData, glm::normalize(glm::cross(v2 - v1, v3 - v1)));
-    insertVec3(m_vertexData, v2);
-    insertVec3(m_vertexData, glm::normalize(glm::cross(v3 - v2, v1 - v2)));
-    insertVec3(m_vertexData, v3);
-    insertVec3(m_vertexData, glm::normalize(glm::cross(v1 - v3, v2 - v3)));
-}
+                    glm::vec3 bottomRight,
+                    float uTopLeft, float vTopLeft,
+                    float uTopRight, float vTopRight,
+                    float uBottomLeft, float vBottomLeft,
+                    float uBottomRight, float vBottomRight) {
+    // Calculate face normal
+    glm::vec3 edge1 = bottomLeft - topLeft;
+    glm::vec3 edge2 = topRight - topLeft;
+    glm::vec3 normal = glm::normalize(glm::cross(edge1, edge2));
 
-void Cube::makeXFace(glm::vec3 topLeft,
-                     glm::vec3 topRight,
-                     glm::vec3 bottomLeft,
-                     glm::vec3 bottomRight)
-{
-    auto z_dist = topRight.z - topLeft.z;
-    auto y_dist = bottomLeft.y - topLeft.y;
-    for (int y = 0; y < m_param1; y++) {
-        for (int z = 0; z < m_param1; z++) {
-            auto newTopLeft = glm::vec3(topLeft.x,
-                                        topLeft.y + y * y_dist / m_param1,
-                                        topLeft.z + z * z_dist / m_param1);
-            auto newTopRight = glm::vec3(newTopLeft.x,
-                                         newTopLeft.y,
-                                         newTopLeft.z + z_dist / m_param1);
-            auto newBottomLeft = glm::vec3(newTopLeft.x,
-                                           newTopLeft.y + y_dist / m_param1,
-                                           newTopLeft.z);
-            auto newBottomRight = glm::vec3(newTopLeft.x,
-                                            newTopLeft.y + y_dist / m_param1,
-                                            newTopLeft.z + z_dist / m_param1);
-            makeTile(newTopLeft, newTopRight, newBottomLeft, newBottomRight);
-        }
-    }
-}
+    // Calculate tangent and bitangent
+    glm::vec3 deltaPos1 = topRight - topLeft;
+    glm::vec3 deltaPos2 = bottomLeft - topLeft;
+    glm::vec2 deltaUV1 = glm::vec2(uTopRight - uTopLeft, vTopRight - vTopLeft);
+    glm::vec2 deltaUV2 = glm::vec2(uBottomLeft - uTopLeft, vBottomLeft - vTopLeft);
 
-void Cube::makeYFace(glm::vec3 topLeft,
-                     glm::vec3 topRight,
-                     glm::vec3 bottomLeft,
-                     glm::vec3 bottomRight)
-{
-    auto x_dist = topRight.x - topLeft.x;
-    auto z_dist = bottomLeft.z - topLeft.z;
-    for (int z = 0; z < m_param1; z++) {
-        for (int x = 0; x < m_param1; x++) {
-            auto newTopLeft = glm::vec3(topLeft.x + x * x_dist / m_param1,
-                                        topLeft.y,
-                                        topLeft.z + z * z_dist / m_param1);
-            auto newTopRight = glm::vec3(newTopLeft.x + x_dist / m_param1,
-                                         newTopLeft.y,
-                                         newTopLeft.z);
-            auto newBottomLeft = glm::vec3(newTopLeft.x,
-                                           newTopLeft.y,
-                                           newTopLeft.z + z_dist / m_param1);
-            auto newBottomRight = glm::vec3(newTopLeft.x + x_dist / m_param1,
-                                            newTopLeft.y,
-                                            newTopLeft.z + z_dist / m_param1);
-            makeTile(newTopLeft, newTopRight, newBottomLeft, newBottomRight);
-        }
-    }
-}
+    float r = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x + 0.0001f);
+    glm::vec3 tangent = (deltaPos1 * deltaUV2.y - deltaPos2 * deltaUV1.y) * r;
+    glm::vec3 bitangent = (deltaPos2 * deltaUV1.x - deltaPos1 * deltaUV2.x) * r;
 
-void Cube::makeZFace(glm::vec3 topLeft,
-                     glm::vec3 topRight,
-                     glm::vec3 bottomLeft,
-                     glm::vec3 bottomRight)
-{
-    auto x_dist = topRight.x - topLeft.x;
-    auto y_dist = bottomLeft.y - topLeft.y;
-    for (int y = 0; y < m_param1; y++) {
-        for (int x = 0; x < m_param1; x++) {
-            auto newTopLeft = glm::vec3(topLeft.x + x * x_dist / m_param1,
-                                        topLeft.y + y * y_dist / m_param1,
-                                        topLeft.z);
-            auto newTopRight = glm::vec3(newTopLeft.x + x_dist / m_param1,
-                                         newTopLeft.y,
-                                         newTopLeft.z);
-            auto newBottomLeft = glm::vec3(newTopLeft.x,
-                                           newTopLeft.y + y_dist / m_param1,
-                                           newTopLeft.z);
-            auto newBottomRight = glm::vec3(newTopLeft.x + x_dist / m_param1,
-                                            newTopLeft.y + y_dist / m_param1,
-                                            newTopLeft.z);
-            makeTile(newTopLeft, newTopRight, newBottomLeft, newBottomRight);
-        }
+    tangent = glm::normalize(tangent - normal * glm::dot(normal, tangent));
+    if (glm::dot(glm::cross(normal, tangent), bitangent) < 0.0f) {
+        tangent = tangent * -1.0f;
     }
+    bitangent = glm::normalize(glm::cross(normal, tangent));
+
+    // First triangle: topLeft, bottomLeft, bottomRight
+    insertVec3(m_vertexData, topLeft);
+    insertVec3(m_vertexData, normal);
+    m_vertexData.push_back(uTopLeft);
+    m_vertexData.push_back(vTopLeft);
+    insertVec3(m_vertexData, tangent);
+    insertVec3(m_vertexData, bitangent);
+
+    insertVec3(m_vertexData, bottomLeft);
+    insertVec3(m_vertexData, normal);
+    m_vertexData.push_back(uBottomLeft);
+    m_vertexData.push_back(vBottomLeft);
+    insertVec3(m_vertexData, tangent);
+    insertVec3(m_vertexData, bitangent);
+
+    insertVec3(m_vertexData, bottomRight);
+    insertVec3(m_vertexData, normal);
+    m_vertexData.push_back(uBottomRight);
+    m_vertexData.push_back(vBottomRight);
+    insertVec3(m_vertexData, tangent);
+    insertVec3(m_vertexData, bitangent);
+
+    // Second triangle: topLeft, bottomRight, topRight
+    insertVec3(m_vertexData, topLeft);
+    insertVec3(m_vertexData, normal);
+    m_vertexData.push_back(uTopLeft);
+    m_vertexData.push_back(vTopLeft);
+    insertVec3(m_vertexData, tangent);
+    insertVec3(m_vertexData, bitangent);
+
+    insertVec3(m_vertexData, bottomRight);
+    insertVec3(m_vertexData, normal);
+    m_vertexData.push_back(uBottomRight);
+    m_vertexData.push_back(vBottomRight);
+    insertVec3(m_vertexData, tangent);
+    insertVec3(m_vertexData, bitangent);
+
+    insertVec3(m_vertexData, topRight);
+    insertVec3(m_vertexData, normal);
+    m_vertexData.push_back(uTopRight);
+    m_vertexData.push_back(vTopRight);
+    insertVec3(m_vertexData, tangent);
+    insertVec3(m_vertexData, bitangent);
 }
 
 void Cube::makeFace(glm::vec3 topLeft,
                     glm::vec3 topRight,
                     glm::vec3 bottomLeft,
                     glm::vec3 bottomRight) {
-    // Task 3: create a single side of the cube out of the 4
-    //         given points and makeTile()
-    // Note: think about how param 1 affects the number of triangles on
-    //       the face of the cube
-    auto vecDiff = bottomRight - topLeft;
-    // Figure out which plane the face is coplanar to:
-    if (vecDiff.x == 0) {
-        makeXFace(topLeft, topRight, bottomLeft, bottomRight);
-    } else if (vecDiff.y == 0) {
-        makeYFace(topLeft, topRight, bottomLeft, bottomRight);
-    } else if (vecDiff.z == 0) {
-        makeZFace(topLeft, topRight, bottomLeft, bottomRight);
+    for (int row = 0; row < m_param1; row++) {
+        for (int col = 0; col < m_param1; col++) {
+            float rowStart = (float)row / m_param1;
+            float rowEnd = (float)(row + 1) / m_param1;
+            float colStart = (float)col / m_param1;
+            float colEnd = (float)(col + 1) / m_param1;
+
+            // Calculate tile corners
+            glm::vec3 tileTopLeft = topLeft +
+                                    colStart * (topRight - topLeft) +
+                                    rowStart * (bottomLeft - topLeft);
+
+            glm::vec3 tileTopRight = topLeft +
+                                     colEnd * (topRight - topLeft) +
+                                     rowStart * (bottomLeft - topLeft);
+
+            glm::vec3 tileBottomLeft = topLeft +
+                                       colStart * (topRight - topLeft) +
+                                       rowEnd * (bottomLeft - topLeft);
+
+            glm::vec3 tileBottomRight = topLeft +
+                                        colEnd * (topRight - topLeft) +
+                                        rowEnd * (bottomLeft - topLeft);
+
+            // Calculate UV coordinates
+            float uTopLeft = colStart;
+            float vTopLeft = 1.0f - rowStart;
+            float uTopRight = colEnd;
+            float vTopRight = 1.0f - rowStart;
+            float uBottomLeft = colStart;
+            float vBottomLeft = 1.0f - rowEnd;
+            float uBottomRight = colEnd;
+            float vBottomRight = 1.0f - rowEnd;
+
+            makeTile(tileTopLeft, tileTopRight, tileBottomLeft, tileBottomRight,
+                     uTopLeft, vTopLeft, uTopRight, vTopRight,
+                     uBottomLeft, vBottomLeft, uBottomRight, vBottomRight);
+        }
     }
 }
 
 void Cube::setVertexData() {
-    // Uncomment these lines for Task 2, then comment them out for Task 3:
+    // Front face (+Z)
+    makeFace(glm::vec3(-0.5f,  0.5f, 0.5f),
+             glm::vec3( 0.5f,  0.5f, 0.5f),
+             glm::vec3(-0.5f, -0.5f, 0.5f),
+             glm::vec3( 0.5f, -0.5f, 0.5f));
 
-    // makeTile(glm::vec3(-0.5f, 0.5f, 0.5f),
-    //          glm::vec3(0.5f, 0.5f, 0.5f),
-    //          glm::vec3(-0.5f, -0.5f, 0.5f),
-    //          glm::vec3(0.5f, -0.5f, 0.5f));
+    // Top face (+Y)
+    makeFace(glm::vec3(-0.5f, 0.5f, -0.5f),
+             glm::vec3( 0.5f, 0.5f, -0.5f),
+             glm::vec3(-0.5f, 0.5f,  0.5f),
+             glm::vec3( 0.5f, 0.5f,  0.5f));
 
-    // Uncomment these lines for Task 3:
+    // Bottom face (-Y)
+    makeFace(glm::vec3(-0.5f, -0.5f,  0.5f),
+             glm::vec3( 0.5f, -0.5f,  0.5f),
+             glm::vec3(-0.5f, -0.5f, -0.5f),
+             glm::vec3( 0.5f, -0.5f, -0.5f));
 
-    // makeFace(glm::vec3(-0.5f, 0.5f, 0.5f),
-    //          glm::vec3(0.5f, 0.5f, 0.5f),
-    //          glm::vec3(-0.5f, -0.5f, 0.5f),
-    //          glm::vec3(0.5f, -0.5f, 0.5f));
+    // Back face (-Z)
+    makeFace(glm::vec3( 0.5f,  0.5f, -0.5f),
+             glm::vec3(-0.5f,  0.5f, -0.5f),
+             glm::vec3( 0.5f, -0.5f, -0.5f),
+             glm::vec3(-0.5f, -0.5f, -0.5f));
 
-    // Task 4: Use the makeFace() function to make all 6 sides of the cube
-    auto v1 = glm::vec3(-0.5f, 0.5f, 0.5f);
-    auto v2 = glm::vec3(0.5f, 0.5f, 0.5f);
-    auto v3 = glm::vec3(-0.5f, -0.5f, 0.5f);
-    auto v4 = glm::vec3(0.5f, -0.5f, 0.5f);
-    auto v5 = glm::vec3(-0.5f, 0.5f, -0.5f);
-    auto v6 = glm::vec3(0.5f, 0.5f, -0.5f);
-    auto v7 = glm::vec3(-0.5f, -0.5f, -0.5f);
-    auto v8 = glm::vec3(0.5f, -0.5f, -0.5f);
+    // Right face (+X)
+    makeFace(glm::vec3( 0.5f,  0.5f,  0.5f),
+             glm::vec3( 0.5f,  0.5f, -0.5f),
+             glm::vec3( 0.5f, -0.5f,  0.5f),
+             glm::vec3( 0.5f, -0.5f, -0.5f));
 
-    makeFace(v1, v2, v3, v4);
-    makeFace(v6, v5, v8, v7);
-    makeFace(v5, v6, v1, v2);
-    makeFace(v2, v6, v4, v8);
-    makeFace(v5, v1, v7, v3);
-    makeFace(v3, v4, v7, v8);
+    // Left face (-X)
+    makeFace(glm::vec3(-0.5f,  0.5f, -0.5f),
+             glm::vec3(-0.5f,  0.5f,  0.5f),
+             glm::vec3(-0.5f, -0.5f, -0.5f),
+             glm::vec3(-0.5f, -0.5f,  0.5f));
 }

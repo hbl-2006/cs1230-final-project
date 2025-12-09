@@ -1,30 +1,21 @@
 #version 330 core
+
+
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec3 normal;
-layout(location = 2) in vec2 objSpaceUV;
-layout(location = 3) in vec3 objSpaceTangent;
-layout(location = 4) in vec3 objSpaceBitangent;
+
 
 out vec3 worldPos;
 out vec3 worldNormal;
-out vec2 texCoords;
-out mat3 TBN;
+
+
 uniform mat4 ctm;
 uniform mat4 view;
 uniform mat4 proj;
 uniform mat3 normal_mat;
 
-void main()
-{
+void main() {
     worldPos = vec3(ctm * vec4(position, 1.0));
     worldNormal = normalize(normal_mat * normal);
-    texCoords = objSpaceUV;
-
-    vec3 T = normalize(normal_mat * objSpaceTangent);
-    vec3 B = normalize(normal_mat * objSpaceBitangent);
-    vec3 N = worldNormal;
-
-    TBN = mat3(T, B, N);
-
     gl_Position = proj * view * ctm * vec4(position, 1);
 }
