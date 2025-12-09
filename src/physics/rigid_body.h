@@ -65,6 +65,8 @@ struct RigidBody
 
         force = glm::vec3(0);
         torque = glm::vec3(0);
+        // std::cout << "linear momentum: " << glm::to_string(linear_momentum)
+        //           << " angular momentum: " << glm::to_string(angular_momentum) << std::endl;
         return true;
     }
 };

@@ -115,6 +115,7 @@ void Realtime::paintGL() {
     auto worldCam = camera.getInverseViewMatrix() * glm::vec4(0, 0, 0, 1);
     glUniform3f(glGetUniformLocation(m_shader, "camPos"), worldCam.x, worldCam.y, worldCam.z);
     for (auto &shape : metadata.shapes) {
+        //std::cout << "painting a shape" << std::endl;
         drawShape(shape);
     }
     glUseProgram(0);
@@ -148,6 +149,7 @@ void Realtime::sceneChanged() {
     for (auto &shape : metadata.shapes) {
         sortedBodies.push_back(&(shape.body));
     }
+    //std::cout << "bodies updated" << std::endl;
     camera = Camera(metadata.cameraData,
                     size().width(),
                     size().height(),
