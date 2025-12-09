@@ -13,9 +13,9 @@
 
 #define ERROR_AT(e) "error at line " << e.lineNumber() << " col " << e.columnNumber() << ": "
 #define PARSE_ERROR(e) std::cout << ERROR_AT(e) << "could not parse <" << e.tagName().toStdString() \
-                                 << ">" << std::endl
+<< ">" << std::endl
 #define UNSUPPORTED_ELEMENT(e) std::cout << ERROR_AT(e) << "unsupported element <" \
-                                         << e.tagName().toStdString() << ">" << std::endl;
+       << e.tagName().toStdString() << ">" << std::endl;
 
 // Students, please ignore this file.
 ScenefileReader::ScenefileReader(const std::string &name) {
@@ -821,6 +821,12 @@ bool ScenefileReader::parsePrimitive(const QJsonObject &prim, SceneNode *node) {
                                   "bumpMapFile",
                                   "bumpMapU",
                                   "bumpMapV",
+                                  "normalFile",
+                                  "normalU",
+                                  "normalV",
+                                  "depthFile",
+                                  "depthU",
+                                  "depthV",
                                   "dynamic"};
 
     QStringList allFields = requiredFields + optionalFields;
@@ -850,6 +856,8 @@ bool ScenefileReader::parsePrimitive(const QJsonObject &prim, SceneNode *node) {
     primitive->type = PrimitiveType::PRIMITIVE_CUBE;
     mat.textureMap.isUsed = false;
     mat.bumpMap.isUsed = false;
+    mat.normalMap.isUsed = false;
+    mat.depthMap.isUsed = false;
     mat.cDiffuse.r = mat.cDiffuse.g = mat.cDiffuse.b = 1;
     node->primitives.push_back(primitive);
 
@@ -1046,6 +1054,32 @@ bool ScenefileReader::parsePrimitive(const QJsonObject &prim, SceneNode *node) {
         mat.bumpMap.repeatU = prim.contains("bumpMapU") && prim["bumpMapU"].isDouble() ? prim["bumpMapU"].toDouble() : 1;
         mat.bumpMap.repeatV = prim.contains("bumpMapV") && prim["bumpMapV"].isDouble() ? prim["bumpMapV"].toDouble() : 1;
         mat.bumpMap.isUsed = true;
+    }
+
+    if (prim.contains("normalFile")) {
+        if (!prim["normalFile"].isString()) {
+            std::cout << "primitive normalFile must be of type string" << std::endl;
+            return false;
+        }
+        std::filesystem::path fileRelativePath(prim["normalFile"].toString().toStdString());
+
+        mat.normalMap.filename = (basepath / fileRelativePath).string();
+        mat.normalMap.repeatU = prim.contains("normalU") && prim["normalU"].isDouble() ? prim["normalU"].toDouble() : 1;
+        mat.normalMap.repeatV = prim.contains("normalV") && prim["normalV"].isDouble() ? prim["normalV"].toDouble() : 1;
+        mat.normalMap.isUsed = true;
+    }
+
+    if (prim.contains("depthFile")) {
+        if (!prim["depthFile"].isString()) {
+            std::cout << "primitive depthFile must be of type string" << std::endl;
+            return false;
+        }
+        std::filesystem::path fileRelativePath(prim["depthFile"].toString().toStdString());
+
+        mat.depthMap.filename = (basepath / fileRelativePath).string();
+        mat.depthMap.repeatU = prim.contains("depthU") && prim["depthU"].isDouble() ? prim["depthU"].toDouble() : 1;
+        mat.depthMap.repeatV = prim.contains("depthV") && prim["depthV"].isDouble() ? prim["depthV"].toDouble() : 1;
+        mat.depthMap.isUsed = true;
     }
 
     return true;

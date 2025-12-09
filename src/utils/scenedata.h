@@ -122,6 +122,10 @@ struct SceneMaterial {
     SceneColor cEmissive; // Not used
     SceneFileMap bumpMap; // Not used
 
+    SceneFileMap normalMap;
+    SceneFileMap depthMap;
+
+
     void clear()
     {
         cAmbient = glm::vec4(0);
@@ -139,6 +143,8 @@ struct SceneMaterial {
 
         cEmissive = glm::vec4(0);
         bumpMap.clear();
+        normalMap = SceneFileMap{};
+        depthMap = SceneFileMap{};
     }
 };
 
