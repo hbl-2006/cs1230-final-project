@@ -71,36 +71,38 @@ void ParticleSystem::initialize() {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void ParticleSystem::spawnFireParticle(Particle &p) {
-    p.position = glm::vec3(4.5f + (getRandom() - 0.5f) * 0.25f, 1.5f, 4.5f + (getRandom() - 0.5f) * 0.25f);
-    p.upVelocity = 2.0f + getRandom() * 4.0f;
-    p.upAcceleration = getRandom() * 4.0f;
-    p.maxLife = m_maxLifeTime * getRandom();
-    p.currLife = p.maxLife;
-    p.particleType = 0.0f;
-    p.xDir = 0.0f;
-    p.zDir = 0.0f;
+void ParticleSystem::addFireLocation(const glm::vec3 &pos, float scalarImpulse) {
+    Key key = {pos.x, pos.z};
+    m_fireLocations[key] += scalarImpulse;
 }
 
 void ParticleSystem::spawnFireParticles(float dt) {
-    if (m_maxParticles == 0) {
-        return;
-    }
-    m_newParticles += dt * m_spawnPerSecond;
+    float newParticles = dt * m_spawnPerSecond;
 
-    while (m_newParticles >= 1.0f) {
-        int index = -1;
-        if (!m_inactiveParticles.empty()) {
-            index = m_inactiveParticles.front();
-            m_inactiveParticles.pop();
-        } else {
-            index = rand() % m_maxParticles;
-            if (m_particles[index].currLife > 0.0f) {
-                continue;
+    for (auto &[location, impulse] : m_fireLocations) {
+        int currNewParticles = (int) (newParticles * sqrt(impulse));
+        while (currNewParticles-- > 0) {
+            int index = -1;
+            if (!m_inactiveParticles.empty()) {
+                index = m_inactiveParticles.front();
+                m_inactiveParticles.pop();
+            } else {
+                index = rand() % m_maxParticles;
+                if (m_particles[index].currLife > 0.0f) {
+                    continue;
+                }
             }
+            Particle &p = m_particles[index];
+            p.position = glm::vec3(location.x + (getRandom() - 0.5f) * 0.125f, -0.5f, location.z + (getRandom() - 0.5f) * sqrt(impulse));
+            p.upVelocity = 4.0f + getRandom() * 8.0f;
+            p.upAcceleration = getRandom() * 4.0f;
+            p.maxLife = m_maxLifeTime * getRandom() * 1.0f;
+            p.currLife = p.maxLife;
+            p.particleType = 0.0f;
+            p.xDir = (getRandom() - 0.5f) * 0.25f;
+            p.yDir = getRandom() * 0.25f;
+            p.zDir = (getRandom() - 0.5f) * 0.25f;
         }
-        spawnFireParticle(m_particles[index]);
-        m_newParticles -= 1.0f;
     }
 }
 
@@ -118,7 +120,6 @@ void ParticleSystem::spawnDustParticles(const glm::vec3 &pos, float scalarImpuls
             }
         }
         Particle &p = m_particles[index];
-        
         p.position = pos + glm::vec3((getRandom() - 0.5f) * 0.5f, 0.0f, (getRandom() - 0.5f) * 0.5f);
         p.upVelocity = (10.0f + getRandom() * 5.0f) * cbrt(scalarImpulse);
         p.maxLife = 5.0f + getRandom() * 0.75f;
@@ -126,6 +127,7 @@ void ParticleSystem::spawnDustParticles(const glm::vec3 &pos, float scalarImpuls
         p.upAcceleration = -6.25f * cbrt(scalarImpulse);
         p.particleType = 1.0f;
         p.xDir = (getRandom() - 0.5f) * 0.25f;
+        p.yDir = getRandom() * 0.25f;
         p.zDir = (getRandom() - 0.5f) * 0.25f;
     }
 }
@@ -140,17 +142,18 @@ void ParticleSystem::updateAllParticles(float dt) {
                 continue;
             }
             if (p.particleType < 0.5f) {
-                float dx = (getRandom() - 0.5f) * 0.125f;
-                float dz = (getRandom() - 0.5f) * 0.125f;
-                p.position += glm::vec3(dx, p.upVelocity * dt, dz) * 0.1f;
+                float dx = (getRandom() - 0.5f) * 2.5f;
+                float dz = (getRandom() - 0.5f) * 2.5f;
+                p.position += glm::vec3(dx, p.upVelocity * dt + p.yDir, dz) * 0.1f;
                 if (p.currLife / p.maxLife < 0.5f) {
                     p.upVelocity += p.upAcceleration * dt;
                 }
             } else {
                 float effects = (p.upVelocity > 0.0f) ? 1.0f : 0.75f;
                 float dx = p.xDir + (getRandom() - 0.5f) * 0.0625f;
+                float dy = p.yDir + (getRandom() - 0.5f) * 0.0625f;
                 float dz = p.zDir + (getRandom() - 0.5f) * 0.0625f;
-                p.position += glm::vec3(dx, p.upVelocity * dt, dz) * 0.1f * effects;
+                p.position += glm::vec3(dx, p.upVelocity * dt + dy, dz) * 0.1f * effects;
                 p.upVelocity += p.upAcceleration * dt * effects;
             }
         }

@@ -45,8 +45,10 @@ void Realtime::resolveOneCollision(RigidBody *A, RigidBody *B)
         if (dustOn && scalarImpulse > 0.5f) {
             if (scalarImpulse > 2.0f) {
                 particles.spawnDustParticles(contactPoint, scalarImpulse);
+                particles.addFireLocation(contactPoint, scalarImpulse);
             } else {
                 particles.spawnDustParticles(contactPoint, sqrt(scalarImpulse));
+                particles.addFireLocation(contactPoint, sqrt(scalarImpulse));
             }
         }
     } else if (B->mass_inv == 0) {
@@ -70,8 +72,10 @@ void Realtime::resolveOneCollision(RigidBody *A, RigidBody *B)
         if (dustOn && scalarImpulse > 0.5f) {
             if (scalarImpulse > 2.0f) {
                 particles.spawnDustParticles(contactPoint, scalarImpulse);
+                particles.addFireLocation(contactPoint, scalarImpulse);
             } else {
                 particles.spawnDustParticles(contactPoint, sqrt(scalarImpulse));
+                particles.addFireLocation(contactPoint, sqrt(scalarImpulse));
             }
         }
     } else {

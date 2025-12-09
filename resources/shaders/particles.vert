@@ -24,7 +24,7 @@ void main() {
 
     float size = -1.0;
     if (particleType < 0.5) {
-        size = fireSize;
+        size = mix(fireSize * 1.0, fireSize * 0.25, 1.0 - lifeFraction);
     } else {
         size = mix(dustSize * 0.5, dustSize * 7.5, 1.0 - lifeFraction);
     }

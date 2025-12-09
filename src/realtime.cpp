@@ -42,7 +42,6 @@ Realtime::Realtime(QWidget *parent)
     prevG                     = false;
     m_keyMap[Qt::Key_X]       = false;
     prevX                     = false;
-    dustOn                    = false;
 
     // If you must use this function, do not edit anything above this
 }
@@ -143,7 +142,7 @@ void Realtime::sceneChanged() {
     prevG = false;
     prevX = false;
     dustOn = false;
-  
+
     // update our list of sortedBodies
     sortedBodies.clear();
     for (auto &shape : metadata.shapes) {

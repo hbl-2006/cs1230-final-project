@@ -47,7 +47,6 @@ private:
     CameraPath cameraPath;
     bool prevP;
     bool prevO;
-    bool dustOn;
     bool prevG;
     bool prevX;
 
@@ -107,4 +106,7 @@ private:
     void resolveOneCollision(RigidBody *A, RigidBody *B);
     glm::vec3 calculateMTV(RigidBody *A, RigidBody *B);
     glm::vec3 approximateContactPoint(RigidBody *A, RigidBody *B);
+
+    // particles
+    bool dustOn = false;
 };
