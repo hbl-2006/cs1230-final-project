@@ -72,8 +72,8 @@ void ParticleSystem::initialize() {
 }
 
 void ParticleSystem::addFireLocation(const glm::vec3 &pos, float scalarImpulse) {
-    Key key = {pos.x, pos.z};
-    m_fireLocations[key] = sqrt(scalarImpulse);
+    Key key = {std::round(pos.x * 10.0f) / 10.0f, std::round(pos.z * 10.0f) / 10.0f};
+    m_fireLocations[key] += sqrt(scalarImpulse);
 }
 
 void ParticleSystem::spawnFireParticles(float dt) {
@@ -87,16 +87,13 @@ void ParticleSystem::spawnFireParticles(float dt) {
                 index = m_inactiveParticles.front();
                 m_inactiveParticles.pop();
             } else {
-                index = rand() % m_maxParticles;
-                if (m_particles[index].currLife > 0.0f) {
-                    continue;
-                }
+                continue;
             }
             Particle &p = m_particles[index];
             p.position = glm::vec3(location.x + (getRandom() - 0.5f) * 0.125f, -0.5f, location.z + (getRandom() - 0.5f) * sqrt(impulse));
             p.upVelocity = 4.0f + getRandom() * 8.0f;
             p.upAcceleration = getRandom() * 4.0f;
-            p.maxLife = m_maxLifeTime * getRandom() * 1.0f;
+            p.maxLife = m_maxLifeTime + getRandom() * 1.5f;
             p.currLife = p.maxLife;
             p.particleType = 0.0f;
             p.xDir = (getRandom() - 0.5f) * 0.25f;
@@ -114,10 +111,7 @@ void ParticleSystem::spawnDustParticles(const glm::vec3 &pos, float scalarImpuls
             index = m_inactiveParticles.front();
             m_inactiveParticles.pop();
         } else {
-            index = rand() % m_maxParticles;
-            if (m_particles[index].currLife > 0.0f) {
-                continue;
-            }
+            continue;
         }
         Particle &p = m_particles[index];
         p.position = pos + glm::vec3((getRandom() - 0.5f) * 0.5f, 0.0f, (getRandom() - 0.5f) * 0.5f);

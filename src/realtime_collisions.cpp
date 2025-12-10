@@ -42,13 +42,13 @@ void Realtime::resolveOneCollision(RigidBody *A, RigidBody *B)
         // Torque is distance x force, so angular impulse is distance x linear impulse by analogy
         glm::vec3 angularImpulse = glm::cross(rB, impulse);
         B->addAngularImpulse(angularImpulse);
-        if (dustOn && scalarImpulse > 0.5f) {
+        if (dustOn && scalarImpulse > 1.0f) {
             if (scalarImpulse > 2.0f) {
                 particles.spawnDustParticles(contactPoint, scalarImpulse);
                 particles.addFireLocation(contactPoint, scalarImpulse);
             } else {
-                particles.spawnDustParticles(contactPoint, sqrt(scalarImpulse));
-                particles.addFireLocation(contactPoint, sqrt(scalarImpulse));
+                particles.spawnDustParticles(contactPoint, sqrt(sqrt(scalarImpulse)));
+                particles.addFireLocation(contactPoint, sqrt(sqrt(scalarImpulse)));
             }
         }
     } else if (B->mass_inv == 0) {
@@ -69,8 +69,8 @@ void Realtime::resolveOneCollision(RigidBody *A, RigidBody *B)
         // Torque is distance x force, so angular impulse is distance x linear impulse by analogy
         glm::vec3 angularImpulse = glm::cross(rA, impulse);
         A->addAngularImpulse(angularImpulse);
-        if (dustOn && scalarImpulse > 0.5f) {
-            if (scalarImpulse > 2.0f) {
+        if (dustOn && scalarImpulse > 1.0f) {
+            if (scalarImpulse > 2.5f) {
                 particles.spawnDustParticles(contactPoint, scalarImpulse);
                 particles.addFireLocation(contactPoint, scalarImpulse);
             } else {
