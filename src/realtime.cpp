@@ -59,6 +59,45 @@ void Realtime::finish() {
     particles.finish();
 }
 
+GLuint Realtime::loadTexture(const std::string &filepath)
+{
+    // Check cache first
+    auto it = m_textureCache.find(filepath);
+    if (it != m_textureCache.end()) {
+        return it->second;
+    }
+
+    // Load new texture
+    QImage image(QString::fromStdString(filepath));
+    if (image.isNull()) {
+        std::cerr << "Failed to load texture: " << filepath << std::endl;
+        return 0;
+    }
+    image = image.convertToFormat(QImage::Format_RGBA8888).mirrored();
+
+    GLuint textureID;
+    glGenTextures(1, &textureID);
+    glBindTexture(GL_TEXTURE_2D, textureID);
+    glTexImage2D(GL_TEXTURE_2D,
+                 0,
+                 GL_RGBA,
+                 image.width(),
+                 image.height(),
+                 0,
+                 GL_RGBA,
+                 GL_UNSIGNED_BYTE,
+                 image.bits());
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+    m_textureCache[filepath] = textureID;
+    return textureID;
+}
+
 void Realtime::initializeGL() {
     m_devicePixelRatio = this->devicePixelRatio();
 
@@ -90,11 +129,11 @@ void Realtime::initializeGL() {
     glGenVertexArrays(4, vaos);
 
     // initialize all vbos and vaos containing unit vertex data that will be eventually passed to shaders
-    initializeData(sphere, SPHERE);
-    initializeData(cone, CONE);
-    initializeData(cube, CUBE);
-    initializeData(cylinder, CYLINDER);
-    
+    initializeData(SPHERE);
+    initializeData(CONE);
+    initializeData(CUBE);
+    initializeData(CYLINDER);
+
     cameraPath = CameraPath();
     useCameraPath(cameraPath, CameraPathTestType::PATH_CIRCULAR_TOWER); // pick path here for camera path
     cameraPath.buildPath();
@@ -105,23 +144,65 @@ void Realtime::initializeGL() {
     initialized = true;
 }
 
-void Realtime::paintGL() {
+void Realtime::paintGL()
+{
     // Students: anything requiring OpenGL calls every frame should be done here
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glDisable(GL_BLEND);
     glDepthMask(GL_TRUE);
     glUseProgram(m_shader);
-    // draw each shape in our render data
+
+    // Set camera position
     auto worldCam = camera.getInverseViewMatrix() * glm::vec4(0, 0, 0, 1);
     glUniform3f(glGetUniformLocation(m_shader, "camPos"), worldCam.x, worldCam.y, worldCam.z);
+
+    // Set view and projection matrices
+    glm::mat4 viewMatrix = camera.getViewMatrix();
+    glm::mat4 projMatrix = camera.getProjectionMatrix();
+    GLint viewLoc = glGetUniformLocation(m_shader, "view");
+    GLint projLoc = glGetUniformLocation(m_shader, "proj");
+    glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &viewMatrix[0][0]);
+    glUniformMatrix4fv(projLoc, 1, GL_FALSE, &projMatrix[0][0]);
+
+    // Get texture-related uniform locations
+    GLint useTextureLoc = glGetUniformLocation(m_shader, "useTexture");
+    GLint textureSamplerLoc = glGetUniformLocation(m_shader, "textureSampler");
+    GLint blendLoc = glGetUniformLocation(m_shader, "blend");
+    GLint repeatULoc = glGetUniformLocation(m_shader, "repeatU");
+    GLint repeatVLoc = glGetUniformLocation(m_shader, "repeatV");
+
+    GLint useNormalMapLoc = glGetUniformLocation(m_shader, "useNormalMap");
+    GLint normalSamplerLoc = glGetUniformLocation(m_shader, "normalSampler");
+
+    GLint useBumpMapLoc = glGetUniformLocation(m_shader, "useBumpMap");
+    GLint bumpSamplerLoc = glGetUniformLocation(m_shader, "bumpSampler");
+    GLint bumpStrengthLoc = glGetUniformLocation(m_shader, "bumpStrength");
+
+    GLint useParallaxMapLoc = glGetUniformLocation(m_shader, "useParallaxMap");
+    GLint parallaxSamplerLoc = glGetUniformLocation(m_shader, "parallaxSampler");
+    GLint parallaxHeightLoc = glGetUniformLocation(m_shader, "parallaxHeight");
+
+    // draw each shape in our render data
     for (auto &shape : metadata.shapes) {
-        //std::cout << "painting a shape" << std::endl;
-        drawShape(shape);
+        drawShape(shape,
+                  useTextureLoc,
+                  textureSamplerLoc,
+                  blendLoc,
+                  repeatULoc,
+                  repeatVLoc,
+                  useNormalMapLoc,
+                  normalSamplerLoc,
+                  useBumpMapLoc,
+                  bumpSamplerLoc,
+                  bumpStrengthLoc,
+                  useParallaxMapLoc,
+                  parallaxSamplerLoc,
+                  parallaxHeightLoc);
     }
     glUseProgram(0);
 
     glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
     glDepthMask(GL_FALSE);
     particles.render(camera.getViewMatrix(), camera.getProjectionMatrix());
     glDisable(GL_BLEND);
@@ -195,8 +276,7 @@ void Realtime::sceneChanged() {
         }
         glUniform1i(typeLoc, type);
 
-        GLint colLoc = glGetUniformLocation(m_shader,
-                                            ("lights[" + std::to_string(i) + "].col").c_str());
+        GLint colLoc = glGetUniformLocation(m_shader, ("lights[" + std::to_string(i) + "].col").c_str());
         glm::vec3 col = light.color;
         glUniform3f(colLoc, col.x, col.y, col.z);
 
@@ -233,10 +313,10 @@ void Realtime::settingsChanged() {
     if (initialized) {
         // reinitialize vbos/vaos if our shape params changed
         if (settings.shapeParameter1 != param1 || settings.shapeParameter2 != param2) {
-            initializeData(sphere, SPHERE);
-            initializeData(cone, CONE);
-            initializeData(cube, CUBE);
-            initializeData(cylinder, CYLINDER);
+            initializeData(SPHERE);
+            initializeData(CONE);
+            initializeData(CUBE);
+            initializeData(CYLINDER);
         }
         // remake projection matrix if near/far plane changed
         if (settings.nearPlane != near || settings.farPlane != far) {
