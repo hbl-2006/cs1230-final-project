@@ -13,9 +13,13 @@ To turn on and off our texture mapping features, use the Extra Credit checkboxes
 
 Resources:
 (Ross)
+
 http://ndl.ethernet.edu.et/bitstream/123456789/24446/1/Gabor%20Szauer_2017.pdf - Oriented Bounding Boxes for collision hitboxes
+
 https://www.cs.cmu.edu/~baraff/sigcourse/notesd1.pdf - Rigid Body Physics
+
 https://www.cs.cmu.edu/~baraff/sigcourse/notesd2.pdf - More Rigid Body Physics
+
 
 (Ignas)
 
