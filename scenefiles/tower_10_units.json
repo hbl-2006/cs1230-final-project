@@ -7,30 +7,45 @@
     "transparentCoeff": 0
   },
   "cameraData": {
-    "position": [0, 5, 15],
-    "up": [0, 1, 0],
+    "position": [
+      0,
+      5,
+      15
+    ],
+    "up": [
+      0,
+      1,
+      0
+    ],
     "heightAngle": 49.5,
-    "look": [0, -3.116, -16.013]
+    "look": [
+      0,
+      -3.116,
+      -16.013
+    ]
   },
-
   "templateGroups": [
     {
       "name": "CubeTemplate",
-      "scale": [0.5, 0.5, 0.5],
+      "scale": [
+        0.5,
+        0.5,
+        0.5
+      ],
       "primitives": [
         {
           "shininess": 10,
           "blend": 1.0,
-          "textureFile": "textures/broken_brick_wall_diff_4k.jpeg",
+          "textureFile": "textures/Facade019A_1K-PNG_Color.png",
           "textureU": 2.0,
           "textureV": 2.0,
-          "normalFile": "textures/broken_brick_wall_diff_4k_normal.png",
+          "normalFile": "textures/Facade019A_1K-PNG_NormalDX.png",
           "normalU": 2.0,
           "normalV": 2.0,
-          "bumpMapFile": "",
+          "bumpMapFile": "textures/Facade019A_1K-PNG_Displacement.png",
           "bumpMapU": 2.0,
           "bumpMapV": 2.0,
-          "depthFile": "",
+          "depthFile": "textures/Facade019A_1K-PNG_Displacement.png",
           "depthU": 2.0,
           "depthV": 2.0,
           "type": "cube"
@@ -39,176 +54,351 @@
     },
     {
       "name": "TowerLevel19",
-      "translate": [0, 0.501, 0],
-      "groups": [ { "name": "CubeTemplate" } ]
+      "translate": [
+        0,
+        0.501,
+        0
+      ],
+      "groups": [
+        {
+          "name": "CubeTemplate"
+        }
+      ]
     },
     {
       "name": "TowerLevel18",
-      "translate": [0, 0.501, 0],
+      "translate": [
+        0,
+        0.501,
+        0
+      ],
       "groups": [
-        { "name": "CubeTemplate" },
-        { "name": "TowerLevel19" }
+        {
+          "name": "CubeTemplate"
+        },
+        {
+          "name": "TowerLevel19"
+        }
       ]
     },
     {
       "name": "TowerLevel17",
-      "translate": [0, 0.501, 0],
+      "translate": [
+        0,
+        0.501,
+        0
+      ],
       "groups": [
-        { "name": "CubeTemplate" },
-        { "name": "TowerLevel18" }
+        {
+          "name": "CubeTemplate"
+        },
+        {
+          "name": "TowerLevel18"
+        }
       ]
     },
     {
       "name": "TowerLevel16",
-      "translate": [0, 0.501, 0],
+      "translate": [
+        0,
+        0.501,
+        0
+      ],
       "groups": [
-        { "name": "CubeTemplate" },
-        { "name": "TowerLevel17" }
+        {
+          "name": "CubeTemplate"
+        },
+        {
+          "name": "TowerLevel17"
+        }
       ]
     },
     {
       "name": "TowerLevel15",
-      "translate": [0, 0.501, 0],
+      "translate": [
+        0,
+        0.501,
+        0
+      ],
       "groups": [
-        { "name": "CubeTemplate" },
-        { "name": "TowerLevel16" }
+        {
+          "name": "CubeTemplate"
+        },
+        {
+          "name": "TowerLevel16"
+        }
       ]
     },
     {
       "name": "TowerLevel14",
-      "translate": [0, 0.501, 0],
+      "translate": [
+        0,
+        0.501,
+        0
+      ],
       "groups": [
-        { "name": "CubeTemplate" },
-        { "name": "TowerLevel15" }
+        {
+          "name": "CubeTemplate"
+        },
+        {
+          "name": "TowerLevel15"
+        }
       ]
     },
     {
       "name": "TowerLevel13",
-      "translate": [0, 0.501, 0],
+      "translate": [
+        0,
+        0.501,
+        0
+      ],
       "groups": [
-        { "name": "CubeTemplate" },
-        { "name": "TowerLevel14" }
+        {
+          "name": "CubeTemplate"
+        },
+        {
+          "name": "TowerLevel14"
+        }
       ]
     },
     {
       "name": "TowerLevel12",
-      "translate": [0, 0.501, 0],
+      "translate": [
+        0,
+        0.501,
+        0
+      ],
       "groups": [
-        { "name": "CubeTemplate" },
-        { "name": "TowerLevel13" }
+        {
+          "name": "CubeTemplate"
+        },
+        {
+          "name": "TowerLevel13"
+        }
       ]
     },
     {
       "name": "TowerLevel11",
-      "translate": [0, 0.501, 0],
+      "translate": [
+        0,
+        0.501,
+        0
+      ],
       "groups": [
-        { "name": "CubeTemplate" },
-        { "name": "TowerLevel12" }
+        {
+          "name": "CubeTemplate"
+        },
+        {
+          "name": "TowerLevel12"
+        }
       ]
     },
     {
       "name": "TowerLevel10",
-      "translate": [0, 0.501, 0],
+      "translate": [
+        0,
+        0.501,
+        0
+      ],
       "groups": [
-        { "name": "CubeTemplate" },
-        { "name": "TowerLevel11" }
+        {
+          "name": "CubeTemplate"
+        },
+        {
+          "name": "TowerLevel11"
+        }
       ]
     },
     {
       "name": "TowerLevel9",
-      "translate": [0, 0.501, 0],
+      "translate": [
+        0,
+        0.501,
+        0
+      ],
       "groups": [
-        { "name": "CubeTemplate" },
-        { "name": "TowerLevel10" }
+        {
+          "name": "CubeTemplate"
+        },
+        {
+          "name": "TowerLevel10"
+        }
       ]
     },
     {
       "name": "TowerLevel8",
-      "translate": [0, 0.501, 0],
+      "translate": [
+        0,
+        0.501,
+        0
+      ],
       "groups": [
-        { "name": "CubeTemplate" },
-        { "name": "TowerLevel9" }
+        {
+          "name": "CubeTemplate"
+        },
+        {
+          "name": "TowerLevel9"
+        }
       ]
     },
     {
       "name": "TowerLevel7",
-      "translate": [0, 0.501, 0],
+      "translate": [
+        0,
+        0.501,
+        0
+      ],
       "groups": [
-        { "name": "CubeTemplate" },
-        { "name": "TowerLevel8" }
+        {
+          "name": "CubeTemplate"
+        },
+        {
+          "name": "TowerLevel8"
+        }
       ]
     },
     {
       "name": "TowerLevel6",
-      "translate": [0, 0.501, 0],
+      "translate": [
+        0,
+        0.501,
+        0
+      ],
       "groups": [
-        { "name": "CubeTemplate" },
-        { "name": "TowerLevel7" }
+        {
+          "name": "CubeTemplate"
+        },
+        {
+          "name": "TowerLevel7"
+        }
       ]
     },
     {
       "name": "TowerLevel5",
-      "translate": [0, 0.501, 0],
+      "translate": [
+        0,
+        0.501,
+        0
+      ],
       "groups": [
-        { "name": "CubeTemplate" },
-        { "name": "TowerLevel6" }
+        {
+          "name": "CubeTemplate"
+        },
+        {
+          "name": "TowerLevel6"
+        }
       ]
     },
     {
       "name": "TowerLevel4",
-      "translate": [0, 0.501, 0],
+      "translate": [
+        0,
+        0.501,
+        0
+      ],
       "groups": [
-        { "name": "CubeTemplate" },
-        { "name": "TowerLevel5" }
+        {
+          "name": "CubeTemplate"
+        },
+        {
+          "name": "TowerLevel5"
+        }
       ]
     },
     {
       "name": "TowerLevel3",
-      "translate": [0, 0.501, 0],
+      "translate": [
+        0,
+        0.501,
+        0
+      ],
       "groups": [
-        { "name": "CubeTemplate" },
-        { "name": "TowerLevel4" }
+        {
+          "name": "CubeTemplate"
+        },
+        {
+          "name": "TowerLevel4"
+        }
       ]
     },
     {
       "name": "TowerLevel2",
-      "translate": [0, 0.501, 0],
+      "translate": [
+        0,
+        0.501,
+        0
+      ],
       "groups": [
-        { "name": "CubeTemplate" },
-        { "name": "TowerLevel3" }
+        {
+          "name": "CubeTemplate"
+        },
+        {
+          "name": "TowerLevel3"
+        }
       ]
     },
     {
       "name": "TowerLevel1",
-      "translate": [0, 0.501, 0],
+      "translate": [
+        0,
+        0.501,
+        0
+      ],
       "groups": [
-        { "name": "CubeTemplate" },
-        { "name": "TowerLevel2" }
+        {
+          "name": "CubeTemplate"
+        },
+        {
+          "name": "TowerLevel2"
+        }
       ]
     },
     {
       "name": "TowerLevel0",
-      "translate": [0, 0, 0],
+      "translate": [
+        0,
+        0,
+        0
+      ],
       "groups": [
-        { "name": "CubeTemplate" },
-        { "name": "TowerLevel1" }
+        {
+          "name": "CubeTemplate"
+        },
+        {
+          "name": "TowerLevel1"
+        }
       ]
     }
   ],
-
   "groups": [
     {
       "name": "Directional Lights",
       "lights": [
         {
-          "color": [1, 1, 1],
+          "color": [
+            1,
+            1,
+            1
+          ],
           "type": "directional",
-          "direction": [0.25, 1, -1]
+          "direction": [
+            0.25,
+            1,
+            -1
+          ]
         },
         {
-          "color": [1, 1, 1],
+          "color": [
+            1,
+            1,
+            1
+          ],
           "type": "directional",
-          "direction": [1, -1.8, -2]
+          "direction": [
+            1,
+            -1.8,
+            -2
+          ]
         }
       ]
     },
@@ -216,206 +406,397 @@
       "name": "Point Light",
       "lights": [
         {
-          "color": [1, 1, 1],
+          "color": [
+            1,
+            1,
+            1
+          ],
           "type": "point",
-          "attenuationCoeff": [1.5, 0, 0]
+          "attenuationCoeff": [
+            1.5,
+            0,
+            0
+          ]
         }
       ],
-      "translate": [10, 10, 10]
+      "translate": [
+        10,
+        10,
+        10
+      ]
     },
     {
       "name": "Tower1",
       "groups": [
-        { "name": "TowerLevel0" }
+        {
+          "name": "TowerLevel0"
+        }
       ],
-      "translate": [-1.002, 0, -1.002]
+      "translate": [
+        -1.002,
+        0,
+        -1.002
+      ]
     },
     {
       "name": "Tower2",
       "groups": [
-        { "name": "TowerLevel0" }
+        {
+          "name": "TowerLevel0"
+        }
       ],
-      "translate": [-0.501, 0, -1.002]
+      "translate": [
+        -0.501,
+        0,
+        -1.002
+      ]
     },
     {
       "name": "Tower3",
       "groups": [
-        { "name": "TowerLevel0" }
+        {
+          "name": "TowerLevel0"
+        }
       ],
-      "translate": [0, 0, -1.002]
+      "translate": [
+        0,
+        0,
+        -1.002
+      ]
     },
     {
       "name": "Tower4",
       "groups": [
-        { "name": "TowerLevel0" }
+        {
+          "name": "TowerLevel0"
+        }
       ],
-      "translate": [0.501, 0, -1.002]
+      "translate": [
+        0.501,
+        0,
+        -1.002
+      ]
     },
     {
       "name": "Tower5",
       "groups": [
-        { "name": "TowerLevel0" }
+        {
+          "name": "TowerLevel0"
+        }
       ],
-      "translate": [1.002, 0, -1.002]
+      "translate": [
+        1.002,
+        0,
+        -1.002
+      ]
     },
     {
       "name": "Tower6",
       "groups": [
-        { "name": "TowerLevel0" }
+        {
+          "name": "TowerLevel0"
+        }
       ],
-      "translate": [-1.002, 0, -0.501]
+      "translate": [
+        -1.002,
+        0,
+        -0.501
+      ]
     },
     {
       "name": "Tower7",
       "groups": [
-        { "name": "TowerLevel0" }
+        {
+          "name": "TowerLevel0"
+        }
       ],
-      "translate": [-0.501, 0, -0.501]
+      "translate": [
+        -0.501,
+        0,
+        -0.501
+      ]
     },
     {
       "name": "Tower8",
       "groups": [
-        { "name": "TowerLevel0" }
+        {
+          "name": "TowerLevel0"
+        }
       ],
-      "translate": [0, 0, -0.501]
+      "translate": [
+        0,
+        0,
+        -0.501
+      ]
     },
     {
       "name": "Tower9",
       "groups": [
-        { "name": "TowerLevel0" }
+        {
+          "name": "TowerLevel0"
+        }
       ],
-      "translate": [0.501, 0, -0.501]
+      "translate": [
+        0.501,
+        0,
+        -0.501
+      ]
     },
     {
       "name": "Tower10",
       "groups": [
-        { "name": "TowerLevel0" }
+        {
+          "name": "TowerLevel0"
+        }
       ],
-      "translate": [1.002, 0, -0.501]
+      "translate": [
+        1.002,
+        0,
+        -0.501
+      ]
     },
     {
       "name": "Tower11",
       "groups": [
-        { "name": "TowerLevel0" }
+        {
+          "name": "TowerLevel0"
+        }
       ],
-      "translate": [-1.002, 0, 0]
+      "translate": [
+        -1.002,
+        0,
+        0
+      ]
     },
     {
       "name": "Tower12",
       "groups": [
-        { "name": "TowerLevel0" }
+        {
+          "name": "TowerLevel0"
+        }
       ],
-      "translate": [-0.501, 0, 0]
+      "translate": [
+        -0.501,
+        0,
+        0
+      ]
     },
     {
       "name": "Tower13",
       "groups": [
-        { "name": "TowerLevel0" }
+        {
+          "name": "TowerLevel0"
+        }
       ],
-      "translate": [0, 0, 0]
+      "translate": [
+        0,
+        0,
+        0
+      ]
     },
     {
       "name": "Tower14",
       "groups": [
-        { "name": "TowerLevel0" }
+        {
+          "name": "TowerLevel0"
+        }
       ],
-      "translate": [0.501, 0, 0]
+      "translate": [
+        0.501,
+        0,
+        0
+      ]
     },
     {
       "name": "Tower15",
       "groups": [
-        { "name": "TowerLevel0" }
+        {
+          "name": "TowerLevel0"
+        }
       ],
-      "translate": [1.002, 0, 0]
+      "translate": [
+        1.002,
+        0,
+        0
+      ]
     },
     {
       "name": "Tower16",
       "groups": [
-        { "name": "TowerLevel0" }
+        {
+          "name": "TowerLevel0"
+        }
       ],
-      "translate": [-1.002, 0, 0.501]
+      "translate": [
+        -1.002,
+        0,
+        0.501
+      ]
     },
     {
       "name": "Tower17",
       "groups": [
-        { "name": "TowerLevel0" }
+        {
+          "name": "TowerLevel0"
+        }
       ],
-      "translate": [-0.501, 0, 0.501]
+      "translate": [
+        -0.501,
+        0,
+        0.501
+      ]
     },
     {
       "name": "Tower18",
       "groups": [
-        { "name": "TowerLevel0" }
+        {
+          "name": "TowerLevel0"
+        }
       ],
-      "translate": [0, 0, 0.501]
+      "translate": [
+        0,
+        0,
+        0.501
+      ]
     },
     {
       "name": "Tower19",
       "groups": [
-        { "name": "TowerLevel0" }
+        {
+          "name": "TowerLevel0"
+        }
       ],
-      "translate": [0.501, 0, 0.501]
+      "translate": [
+        0.501,
+        0,
+        0.501
+      ]
     },
     {
       "name": "Tower20",
       "groups": [
-        { "name": "TowerLevel0" }
+        {
+          "name": "TowerLevel0"
+        }
       ],
-      "translate": [1.002, 0, 0.501]
+      "translate": [
+        1.002,
+        0,
+        0.501
+      ]
     },
     {
       "name": "Tower21",
       "groups": [
-        { "name": "TowerLevel0" }
+        {
+          "name": "TowerLevel0"
+        }
       ],
-      "translate": [-1.002, 0, 1.002]
+      "translate": [
+        -1.002,
+        0,
+        1.002
+      ]
     },
     {
       "name": "Tower22",
       "groups": [
-        { "name": "TowerLevel0" }
+        {
+          "name": "TowerLevel0"
+        }
       ],
-      "translate": [-0.501, 0, 1.002]
+      "translate": [
+        -0.501,
+        0,
+        1.002
+      ]
     },
     {
       "name": "Tower23",
       "groups": [
-        { "name": "TowerLevel0" }
+        {
+          "name": "TowerLevel0"
+        }
       ],
-      "translate": [0, 0, 1.002]
+      "translate": [
+        0,
+        0,
+        1.002
+      ]
     },
     {
       "name": "Tower24",
       "groups": [
-        { "name": "TowerLevel0" }
+        {
+          "name": "TowerLevel0"
+        }
       ],
-      "translate": [0.501, 0, 1.002]
+      "translate": [
+        0.501,
+        0,
+        1.002
+      ]
     },
     {
       "name": "Tower25",
       "groups": [
-        { "name": "TowerLevel0" }
+        {
+          "name": "TowerLevel0"
+        }
       ],
-      "translate": [1.002, 0, 1.002]
+      "translate": [
+        1.002,
+        0,
+        1.002
+      ]
     },
     {
       "name": "Floor",
       "primitives": [
         {
-          "diffuse": [0.3, 0.7, 0.3],
-          "specular": [1, 1, 1],
-          "reflective": [0.5, 0.5, 0.5],
+          "diffuse": [
+            0.3,
+            0.7,
+            0.3
+          ],
+          "specular": [
+            1,
+            1,
+            1
+          ],
+          "reflective": [
+            0.5,
+            0.5,
+            0.5
+          ],
           "shininess": 10,
-          "blend": 0.5,
-          "textureFile": "",
-          "textureU": 1,
-          "textureV": 1,
+          "blend": 1,
+          "textureFile": "textures/Ground048_1K-PNG_Color.png",
+          "textureU": 2.0,
+          "textureV": 2.0,
+          "normalFile": "textures/Ground048_1K-PNG_NormalDX.png",
+          "normalU": 2.0,
+          "normalV": 2.0,
+          "bumpMapFile": "textures/Ground048_1K-PNG_Displacement.png",
+          "bumpMapU": 2.0,
+          "bumpMapV": 2.0,
+          "depthFile": "textures/Ground048_1K-PNG_Displacement.png",
+          "depthU": 2.0,
+          "depthV": 2.0,
           "type": "cube",
           "dynamic": false
         }
       ],
-      "translate": [0, -0.5, 0],
-      "scale": [100, 0.1, 100]
+      "translate": [
+        0,
+        -0.5,
+        0
+      ],
+      "scale": [
+        100,
+        0.1,
+        100
+      ]
     }
   ]
 }

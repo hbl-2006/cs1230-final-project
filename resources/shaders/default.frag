@@ -54,11 +54,31 @@ float spotLightFalloff(float x, float inner, float outer) {
            + 3.0 * pow(((x - inner) / (outer - inner)), 2.0);
 }
 
-// Parallax mapping function
 vec2 ParallaxMapping(vec2 texCoords, vec3 viewDir) {
-    float height = texture(parallaxSampler, texCoords).r;
-    vec2 p = viewDir.xy / viewDir.z * (height * parallaxHeight);
-    return texCoords - p;
+    const float minLayers = 8.0;
+    const float maxLayers = 32.0;
+    float numLayers = mix(maxLayers, minLayers, abs(dot(vec3(0.0, 0.0, 1.0), viewDir)));
+    float layerDepth = 1.0 / numLayers;
+    float currentLayerDepth = 0.0;
+    vec2 P = viewDir.xy * parallaxHeight;
+    vec2 deltaTexCoords = P / numLayers;
+    vec2 currentTexCoords = texCoords;
+    float currentDepthMapValue = 1.0 - texture(parallaxSampler, currentTexCoords).r;
+
+    while(currentLayerDepth < currentDepthMapValue) {
+        currentTexCoords -= deltaTexCoords;
+        currentDepthMapValue = 1.0 - texture(parallaxSampler, currentTexCoords).r;
+        currentLayerDepth += layerDepth;
+    }
+
+    vec2 prevTexCoords = currentTexCoords + deltaTexCoords;
+
+    float afterDepth = currentDepthMapValue - currentLayerDepth;
+    float beforeDepth = (1.0 - texture(parallaxSampler, prevTexCoords).r) - currentLayerDepth + layerDepth;
+    float weight = afterDepth / (afterDepth - beforeDepth);
+    vec2 finalTexCoords = prevTexCoords * weight + currentTexCoords * (1.0 - weight);
+
+    return finalTexCoords;
 }
 
 // Compute bumped normal from height map
@@ -85,20 +105,27 @@ vec3 computeBumpedNormal(vec2 uv) {
 
 void main() {
     // Transform view direction to tangent space for parallax mapping
-    vec3 tangentViewPos = transpose(TBN) * camPos;
-    vec3 tangentFragPos = transpose(TBN) * worldPos;
-    vec3 tangentViewDir = normalize(tangentViewPos - tangentFragPos);
+    // vec3 tangentViewPos = transpose(TBN) * camPos;
+    // vec3 tangentFragPos = transpose(TBN) * worldPos;
+    // vec3 tangentViewDir = normalize(tangentViewPos - tangentFragPos);
+
+    vec3 tangentViewDir = normalize(transpose(TBN) * (camPos - worldPos));
 
     // Apply texture repeat
     vec2 finalTexCoords = texCoords * vec2(repeatU, repeatV);
 
     // Apply parallax mapping if enabled
     if (useParallaxMap == 1) {
-        finalTexCoords = ParallaxMapping(finalTexCoords, tangentViewDir);
+        vec2 baseTexCoords = fract(texCoords) * vec2(repeatU, repeatV);
+        vec2 parallaxCoords = ParallaxMapping(baseTexCoords, tangentViewDir);
 
-        if(finalTexCoords.x > repeatU || finalTexCoords.y > repeatV ||
-           finalTexCoords.x < 0.0 || finalTexCoords.y < 0.0)
+        vec2 normalizedCoords = parallaxCoords / vec2(repeatU, repeatV);
+        if(normalizedCoords.x > 1.0 || normalizedCoords.y > 1.0 ||
+           normalizedCoords.x < 0.0 || normalizedCoords.y < 0.0) {
             discard;
+        }
+
+        finalTexCoords = parallaxCoords;
     }
 
     // Wrap texture coordinates
