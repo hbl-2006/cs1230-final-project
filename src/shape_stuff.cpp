@@ -61,7 +61,7 @@ void Realtime::drawShape(RenderShapeData &shape,
                          GLint useBumpMapLoc, GLint bumpSamplerLoc, GLint bumpStrengthLoc,
                          GLint useParallaxMapLoc, GLint parallaxSamplerLoc, GLint parallaxHeightLoc) {
     // Set model matrix
-    GLint modelLoc = glGetUniformLocation(m_shader, "model");
+    GLint modelLoc = glGetUniformLocation(m_shader, "model");  // Changed from "ctm"
     glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &shape.ctm[0][0]);
 
     // Set material properties
@@ -74,6 +74,7 @@ void Realtime::drawShape(RenderShapeData &shape,
     glUniform4fv(cDiffuseLoc, 1, &shape.primitive.material.cDiffuse[0]);
     glUniform4fv(cSpecularLoc, 1, &shape.primitive.material.cSpecular[0]);
     glUniform1f(shininessLoc, shape.primitive.material.shininess);
+
 
     // Handle texture mapping
     bool hasTexture = settings.extraCredit3 && shape.primitive.material.textureMap.isUsed;

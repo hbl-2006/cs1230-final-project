@@ -276,8 +276,7 @@ void Realtime::sceneChanged() {
         }
         glUniform1i(typeLoc, type);
 
-        GLint colLoc = glGetUniformLocation(m_shader,
-                                            ("lights[" + std::to_string(i) + "].col").c_str());
+        GLint colLoc = glGetUniformLocation(m_shader, ("lights[" + std::to_string(i) + "].col").c_str());
         glm::vec3 col = light.color;
         glUniform3f(colLoc, col.x, col.y, col.z);
 
